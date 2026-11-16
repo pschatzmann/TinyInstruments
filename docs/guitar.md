@@ -6,6 +6,10 @@ up to E4. It needs about 700 KB of flash.
 
 Source: [FreePats Electric Guitar FSBS direct](https://freepats.zenvoid.org/ElectricGuitar/clean-electric-guitar.html) (CC0).
 
+Smaller versions: `ElectricGuitarSmall()` (~250 KB, `samples/ElectricGuitarSmall.h`)
+and `data/ElectricGuitarOctave.bin` (~150 KB), see
+[Versions and sizes](instruments.md#versions-and-sizes).
+
 The direct signal of a guitar sounds thin on its own: like a real guitar it is
 played through an amplifier. The `GuitarAmp` effect is assigned to the midi
 channel of the guitar, so it only processes the guitar:

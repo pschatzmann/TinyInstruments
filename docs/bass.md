@@ -6,6 +6,10 @@ thirds with 2 velocity layers. It needs about 700 KB of flash.
 
 Source: [Karoryfer Growlybass](https://github.com/sfzinstruments/karoryfer.growlybass) (CC0).
 
+Smaller versions: `ElectricBassSmall()` (~250 KB, `samples/ElectricBassSmall.h`)
+and `data/ElectricBassOctave.bin` (~150 KB), see
+[Versions and sizes](instruments.md#versions-and-sizes).
+
 ```cpp
 #include "samples/ElectricBass.h"
 Instrument bass = BassInstrument(ElectricBass());

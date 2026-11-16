@@ -5,13 +5,17 @@ of flash each:
 
 | Header | Function | Source | Zones |
 |---|---|---|---|
-| `samples/UprightPianoKW.h` | `UprightPianoKW()` | [FreePats Upright Piano KW](http://freepats.zenvoid.org/Piano/acoustic-grand-piano.html) (Kawai upright) | 66: minor thirds, 2 velocity layers |
-| `samples/GrandPiano.h` | `GrandPiano()` | [VCSL](https://github.com/sgossner/VCSL) Grand Piano, Steinway B | 66: major thirds, 3 velocity layers |
+| `samples/UprightPianoKW.h` | `UprightPianoKW()` | [FreePats Upright Piano KW](http://freepats.zenvoid.org/Piano/acoustic-grand-piano.html) (Kawai upright) | 66: 38 notes (mostly minor thirds), 2 velocity layers |
+| `samples/GrandPiano.h` | `GrandPiano()` | [VCSL](https://github.com/sgossner/VCSL) Grand Piano, Steinway B | 66: 22 notes in major thirds, 3 velocity layers |
 
 ```cpp
 #include "samples/GrandPiano.h"
 Instrument piano = PianoInstrument(GrandPiano());
 ```
+
+Smaller versions (one velocity layer, 22 kHz): `UprightPianoKWSmall()` and
+`GrandPianoSmall()` (~250 KB, `samples/...Small.h`), and the octave versions
+(~150 KB, only as data file). See [Versions and sizes](instruments.md#versions-and-sizes).
 
 ## Fitting into flash
 

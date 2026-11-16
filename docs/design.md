@@ -5,7 +5,7 @@
 - Realistic instruments on a microcontroller (target: ESP32 with 4 MB flash)
 - Sample data must fit into flash (PROGMEM): about 700 KB per instrument, so
   that one instrument fits into the default partition scheme together with the
-  program
+  program; smaller versions (~250 KB, ~150 KB) for several instruments
 - Header only, the core does not depend on Arduino (testable on the desktop)
 - Output via arduino-audio-tools, input via arduino-midi
 - Max 10 notes at the same time for a piano (one per finger)
@@ -97,7 +97,7 @@ decoding from the beginning. The data is a single continuous stream per zone
  └─────────────────────────────────────────────────────────────────────┘
         │ Instrument: SampleSet + playing parameters
         ▼
- SampleSet ──▶ SampleZone[]: ADPCM data, loop, decay, key/vel range, tune
+ SampleSet ──▶ SampleZone[]: ADPCM data, loop, decay, key/vel range, tune, pitch marks
     ▲                            ▲
     │ compiled in (flash)        │ DynamicSampleSet: loaded from a Stream
  samples/X.h                     data/X.bin  (into PSRAM if available)
@@ -109,7 +109,10 @@ decoding from the beginning. The data is a single continuous stream per zone
 | `DynamicSampleSet` | loads a sample set from a Stream into PSRAM / RAM |
 | `ImaAdpcmDecoder` | streaming decoder with seek to a saved state |
 | `SamplerVoice` | one sounding note: decode, interpolate, filter, envelopes, pan |
-| `Instrument` | how a sample set is played: release, dampers, velocity curve, polyphony, choke, legato, vibrato |
+| `PsolaSource` | PSOLA pitch shifting of a zone (used by the voice with `PitchShift::Psola`) |
+| `Instrument` | how a sample set is played: release, dampers, velocity curve, polyphony, choke, legato, vibrato, pitch shifting |
+| `InstrumentBank` | maps midi program numbers to instruments and effects |
+| `ChannelEffect`, `GuitarAmp` | effects which process the audio of their midi channels |
 | `SampleSynthesizer` | midi handling, voice allocation, mixing, output conversion |
 | `EventQueue` | passes midi events from the midi task to the audio task |
 | `SampleSynthesizerStream` | audio-tools adapter (`AudioStream`) |
@@ -245,9 +248,12 @@ buffer.
 
 | | Flash | RAM |
 |---|---|---|
-| sample data per instrument | ~700 KB (or PSRAM when loaded) | - |
-| zone table | ~40 bytes per zone | - |
-| synthesizer (12 voices, queue, channels) | - | ~2 KB |
+| sample data per instrument | ~700 KB full, ~250 KB small (or PSRAM when loaded) | - |
+| pitch marks (PSOLA instruments) | 2 bytes per period, included in the sample data budget | - |
+| zone table | 44 bytes per zone | - |
+| synthesizer (12 voices, queue, channels) | - | ~7 KB |
+| PSOLA ring buffer | - | 8 KB per voice which uses PSOLA (PSRAM if available) |
+| `GuitarAmp` | - | ~8.5 KB + echo buffer (~33 KB, PSRAM if available) |
 | render buffers | - | 2 x `TI_BLOCK_SIZE` floats on the stack |
 
 The sample data is `const` and therefore stays in flash on the ESP32 (memory
@@ -263,6 +269,7 @@ allocates the zones and the data in PSRAM if available.
 The core is tested on the desktop with CMake (see [testing](testing.md)):
 ADPCM round trip and seeking, pitch accuracy, loops without discontinuities,
 decay and release, sustain pedal, dampers, polyphony limit, click free voice
-stealing, choke groups, legato, vibrato, midi controllers, flash budget of the
-sample sets and loading from streams. The CPU load is measured on the device
-with the benchmark example.
+stealing, choke groups, legato, vibrato, midi controllers, program changes,
+PSOLA pitch shifting, the guitar amplifier, flash budget of the sample sets
+(full and small versions) and loading from streams. The CPU load is measured
+on the device with the benchmark example.

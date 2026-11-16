@@ -15,25 +15,6 @@ python3 tools/sfz2header.py MyPiano.sfz --name MyPiano --budget 700000 \
 The zone lengths go from long (bass, `--bass`) to short (treble, `--treble`)
 and are scaled to fit into the budget.
 
-## Fewer zones
-
-`--step 12` keeps only one root key per octave (`--step 4`: major thirds,
-...). The key ranges of the kept zones are extended to the middle between
-their neighbours, so each zone is transposed by up to +/- `step/2` semitones.
-The same budget then gives longer zones, or a smaller `--budget` gives a
-smaller sample set:
-
-```
-python3 tools/sfz2header.py MyPiano.sfz --name MyPianoSmall --step 12 \
-    --budget 250000 -o src/samples/MyPianoSmall.h
-```
-
-The bigger the transposition, the more the timbre and the envelope change
-(higher notes get shorter and brighter, lower ones longer and duller), and
-the timbre jumps where two zones meet. This works well for synthetic and
-sustained sounds; for acoustic instruments `--step 4` or `--step 6` is usually
-the better compromise. Don't use it for drums: each key is a different sound.
-
 ## Drums and percussion
 
 ```
@@ -62,7 +43,7 @@ Round robin alternatives are skipped (only the first one is used) unless
 
 ```
 python3 tools/sfz2header.py Sax.sfz --name MySax --mode sustain \
-    --loop-fraction 0.65 --normalize-layers --tune-correct \
+    --loop-fraction 0.65 --normalize-layers --tune-correct --pitch-marks \
     --budget 700000 -o src/samples/MySax.h
 ```
 
@@ -86,8 +67,10 @@ converted with `tools/header2bin.py src/samples/X.h data/X.bin`.
 ## Smaller sample sets
 
 - `--single-layer`: keep only the loudest velocity layer of each key
-- `--step N`: keep only recordings which are at least N semitones apart; the
-  other notes are transposed
+- `--step N`: keep only recordings which are at least N semitones apart
+  (`--step 12`: one per octave). The key ranges of the kept zones are extended
+  to the middle between their neighbours, so each one is transposed by up to
+  +/- N/2 semitones. Not for drums: each key is a different sound
 - `--rate 22050`: lower sample rate (less treble)
 - `--quality`: measures the result: the playback of each zone (loop, decay,
   ADPCM) is compared with the original recording (third octave band levels and
@@ -102,6 +85,14 @@ neighboring notes of a real instrument differ that much anyway. With fewer
 recordings each one can be longer: one recording per octave can be a good use
 of the memory, but listen to it: the measurement does not capture everything
 (e.g. the attack length with `Resample`).
+
+Example, an octave version of a piano:
+
+```
+python3 tools/sfz2header.py MyPiano.sfz --name MyPianoOctave --single-layer \
+    --step 12 --rate 22050 --budget 150000 --quality \
+    --binary data/MyPianoOctave.bin -o MyPianoOctave.h
+```
 
 ## Sample libraries without SFZ
 

@@ -7,7 +7,7 @@ foreach(test_name test_adpcm test_voice test_synthesizer test_piano test_drums t
     add_test(NAME ${test_name} COMMAND ${test_name})
 endforeach()
 
-# Renders a demo with the piano to piano_demo.wav for listening
+# Renders a demo of all instruments to demo.wav for listening
 add_executable(render_demo render_demo.cpp)
 target_link_libraries(render_demo PRIVATE TinyInstruments)
 # piano and drums together need more voices

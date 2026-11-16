@@ -6,6 +6,10 @@
 
 Source: [VSCO 2 Community Edition](https://github.com/sgossner/VSCO-2-CE) (CC0).
 
+Smaller versions: `ClarinetSmall()` (~250 KB, `samples/ClarinetSmall.h`) and
+`data/ClarinetOctave.bin` (~150 KB), see
+[Versions and sizes](instruments.md#versions-and-sizes).
+
 ```cpp
 #include "samples/Clarinet.h"
 Instrument clarinet = ClarinetInstrument(Clarinet());

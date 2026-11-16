@@ -6,6 +6,11 @@ the General MIDI percussion keys. It needs about 700 KB of flash.
 Source: [Virtuosity Drums](https://versilian-studios.com/?p=694)
 by Versilian Studios (CC0, public domain), mid microphone, 2 velocity layers.
 
+`samples/DrumKitSmall.h` (`DrumKitSmall()`, ~250 KB) has the same keys with one
+velocity layer at 22 kHz. There is no octave version: each key is a different
+sound, so the keys can't be created by transposing (see
+[Versions and sizes](instruments.md#versions-and-sizes)).
+
 ```cpp
 #include "samples/DrumKit.h"
 Instrument drums = DrumInstrument(DrumKit());

@@ -57,8 +57,12 @@ To use another instrument, include its header and use the matching preset:
 | Clarinet | `samples/Clarinet.h` | `ClarinetInstrument(Clarinet())` | any |
 | Electric bass | `samples/ElectricBass.h` | `BassInstrument(ElectricBass())` + `GuitarAmp(GuitarAmp::Bass)` | any |
 
-See [Instruments](instruments.md) for the details. Instead of compiling the
-samples into the program, they can also be [loaded from a file](loading.md).
+Each instrument also has a small version (~250 KB instead of ~700 KB), e.g.
+`samples/GrandPianoSmall.h` with `PianoInstrument(GrandPianoSmall())`. See
+[Instruments](instruments.md) for the details and
+[Versions and sizes](instruments.md#versions-and-sizes) to compare them.
+Instead of compiling the samples into the program, they can also be
+[loaded from a file](loading.md).
 
 ## Trying it out on the desktop
 

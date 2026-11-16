@@ -2,7 +2,8 @@
 
 An `Instrument` combines a sample set (the recorded sounds) with the
 parameters which define how it is played. The included sample sets are all
-CC0 (public domain) and need about 700 KB each:
+CC0 (public domain) and need about 700 KB each (smaller versions: see
+[Versions and sizes](#versions-and-sizes)):
 
 | Instrument | Sample set | Preset | Source | Details |
 |---|---|---|---|---|
@@ -200,8 +201,8 @@ synth.setInstrument(-1, piano);  // all channels ...
 synth.setInstrument(9, drums);   // ... except channel 10
 ```
 
-Each sample set needs about 700 KB, so two instruments need the "Huge APP"
-partition scheme on an ESP32 with 4 MB flash, or can be
-[loaded into PSRAM](loading.md).
+Each full sample set needs about 700 KB, so two instruments need the "Huge
+APP" partition scheme on an ESP32 with 4 MB flash. Alternatives: use the
+small versions (~250 KB each), or [load them into PSRAM](loading.md).
 
 Your own instruments can be created with the [converter](sample-sets.md).

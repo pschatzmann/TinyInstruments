@@ -39,12 +39,13 @@ The `DynamicSampleSet` must exist as long as the instrument is played. Call
 `end()` to release the memory.
 
 See the [file-psram-serial-midi](../examples/file-psram-serial-midi) example.
-The [all-instruments](../examples/all-instruments) example loads all sample
-sets (4.9 MB) into the 8 MB PSRAM of an ESP32-S3: this was tested on an
-ESP32-S3 N16R8 (3.4 MB of PSRAM stay free).
+The [all-instruments](../examples/all-instruments) example loads the full
+versions of all instruments (7 files, 4.9 MB) into the 8 MB PSRAM of an
+ESP32-S3: this was tested on an ESP32-S3 N16R8 (3.4 MB of PSRAM stay free).
 
-To create a LittleFS image with all sample sets without the Arduino IDE plugin
-(16 MB flash with the `partitions.csv` of the example):
+To create a LittleFS image with all 20 data files (7.6 MB) without the Arduino
+IDE plugin (16 MB flash with the `partitions.csv` of the example: 12.9 MB
+LittleFS):
 
 ```
 mklittlefs -c data -b 4096 -p 256 -s 0xCE0000 littlefs.bin
