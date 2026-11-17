@@ -130,7 +130,7 @@ Instrument clarinet = ClarinetInstrument(ClarinetSmall());
 Instrument drums = DrumInstrument(DrumKitSmall());
 Instrument epiano = ElectricPianoInstrument(WurlitzerSmall());
 Instrument upright_bass = UprightBassInstrument(UprightBassSmall());
-Tremolo tremolo(5.5f, 0.3f);
+TremoloEffect tremolo(5.5f, 0.3f);
 GuitarAmp clean_amp(GuitarAmp::Clean), bass_amp(GuitarAmp::Bass);
 TonewheelOrgan organ("888000000");  // synthesized: no sample data
 Instrument organ_instrument = OrganInstrument(organ);

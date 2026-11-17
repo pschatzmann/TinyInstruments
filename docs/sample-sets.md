@@ -55,8 +55,12 @@ python3 tools/sfz2header.py Sax.sfz --name MySax --mode sustain \
 - `--pitch-marks`: stores the start of each period, so that the instrument
   can use `PitchShift::Psola` (2 bytes per period, included in the budget)
 - `--tune-correct`: measures the pitch of each zone and stores a correction
-  in cents (+/- 127). The converter warns if a zone seems to be an octave
-  above or below its root key, or if the root key is off by a semitone
+  in cents. Sustained sounds (`--mode sustain`) are measured in the loop,
+  decaying sounds (e.g. plucked strings, whose pitch drifts) 0.1 - 0.5 s after
+  the start, which is the pitch that is heard. Corrections of more than 50
+  cents are not applied: they are rather wrong measurements (e.g. an octave
+  error) than a wrong tuning. The converter warns if a zone seems to be an
+  octave above or below its root key, or if the root key is off by a semitone
 
 ## Binary files
 

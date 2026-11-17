@@ -21,6 +21,7 @@ ctest --test-dir build --output-on-failure
 | `test_clarinet` | clarinet: pitch and octave, corrected root key, sustain, legato, no automatic vibrato |
 | `test_psola` | PSOLA: lossless at ratio 1, pitch, length kept (amplitude step), continuity, level, loops, one shots, legato start, formants kept with the real clarinet |
 | `test_small` | small sample sets: size, binary files, every key compared with the full version, pitch |
+| `test_jazz` | electric piano and upright bass: sizes, headers identical with the data files, every key sounds, pitch, velocity, release, 4 strings; tremolo (auto pan) |
 | `test_organ` | tonewheel organ: pitch of the drawbars, foldback, sustain, release, percussion (single triggered), drawbars with CCs; rotary speaker: stereo, slow and fast modulation, acceleration |
 | `test_octave` | octave sample sets: size, headers identical with the data files, every key sounds, pitch |
 | `test_forwarders` | midi forwarding of the desktop player: serial (pseudo terminal, 115200 and 31250 baud), TCP with reconnect, UDP, target parsing (POSIX only) |

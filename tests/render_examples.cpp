@@ -159,7 +159,7 @@ static void bassPhrase(int ch) {
 int main(int argc, char** argv) {
   std::string dir = argc > 1 ? argv[1] : ".";
   GuitarAmp clean(GuitarAmp::Clean), bass_amp(GuitarAmp::Bass);
-  Tremolo tremolo(5.5f, 0.3f);
+  TremoloEffect tremolo(5.5f, 0.3f);
   struct Row {
     const char* name;
     Instrument (*preset)(const SampleSet&);

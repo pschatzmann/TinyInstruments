@@ -143,7 +143,7 @@ int main() {
   // tremolo: amplitude modulation at the rate, stereo (auto pan) in opposite phase
   {
     Instrument ep = ElectricPianoInstrument(Wurlitzer());
-    Tremolo tremolo(5.0f, 0.8f, true);
+    TremoloEffect tremolo(5.0f, 0.8f, true);
     SampleSynthesizer synth;
     synth.setInstrument(0, ep);
     synth.setEffect(0, &tremolo);

@@ -216,7 +216,7 @@ inline Instrument UprightBassInstrument(const SampleSet& set) {
 }
 
 /// Instrument with the parameters of an electric piano (Wurlitzer, use it
-/// optionally with a Tremolo effect): all keys have dampers, short release,
+/// optionally with a TremoloEffect): all keys have dampers, short release,
 /// little stereo spread
 inline Instrument ElectricPianoInstrument(const SampleSet& set) {
   Instrument ep(set);

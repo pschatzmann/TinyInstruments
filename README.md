@@ -8,8 +8,9 @@ Header only musical instruments for microcontrollers: realistic, sample based
 sound which fits into the flash memory of an ESP32, and a synthesized
 tonewheel organ.
 
-- Instruments (CC0, ~700 KB each): upright piano, grand piano, drum kit, tenor saxophone,
-  electric guitar with amplifier, electric bass, clarinet
+- Instruments (~700 KB each): upright piano, grand piano, electric piano (Wurlitzer),
+  drum kit, tenor saxophone, clarinet, electric guitar with amplifier, electric bass,
+  upright bass
 - Tonewheel organ (Hammond style) with rotary speaker (Leslie): synthesized, no sample data
 - Smaller versions with ~250 KB and ~150 KB, also as headers ([versions and sizes](docs/instruments.md#versions-and-sizes))
 - Sample data compiled into flash, or loaded at runtime from any Stream (e.g. a file) into PSRAM
@@ -34,6 +35,8 @@ tonewheel organ.
 | Clarinet | [699 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/Clarinet.mp3) | [250 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ClarinetSmall.mp3) | [150 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ClarinetOctave.mp3) |
 | Electric guitar | [701 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ElectricGuitar.mp3) | [251 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ElectricGuitarSmall.mp3) | [150 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ElectricGuitarOctave.mp3) |
 | Electric bass | [700 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ElectricBass.mp3) | [250 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ElectricBassSmall.mp3) | [150 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ElectricBassOctave.mp3) |
+| Electric piano | [696 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/Wurlitzer.mp3) | [245 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/WurlitzerSmall.mp3) | [136 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/WurlitzerOctave.mp3) |
+| Upright bass | [700 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/UprightBass.mp3) | [250 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/UprightBassSmall.mp3) | [150 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/UprightBassOctave.mp3) |
 | Tonewheel organ | [synthesized: 0 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/TonewheelOrgan.mp3) | - | - |
 
 - **full**: all recordings and velocity layers, 32 kHz
@@ -48,7 +51,7 @@ versions of an instrument). Details and quality measurements:
 ## Documentation
 
 - [Getting Started](docs/getting-started.md) (with the list of [examples](docs/getting-started.md#examples))
-- [Instruments](docs/instruments.md): [Pianos](docs/piano.md), [Drum Kit](docs/drums.md), [Saxophone](docs/saxophone.md), [Electric Guitar](docs/guitar.md), [Electric Bass](docs/bass.md), [Clarinet](docs/clarinet.md), [Tonewheel Organ](docs/organ.md)
+- [Instruments](docs/instruments.md): [Pianos](docs/piano.md), [Electric Piano](docs/electric-piano.md), [Drum Kit](docs/drums.md), [Saxophone](docs/saxophone.md), [Clarinet](docs/clarinet.md), [Electric Guitar](docs/guitar.md), [Electric Bass](docs/bass.md), [Upright Bass](docs/upright-bass.md), [Tonewheel Organ](docs/organ.md)
 - [Loading Sample Sets from Files / PSRAM](docs/loading.md)
 - [Performance](docs/performance.md)
 - [Desktop Player](docs/desktop.md)
@@ -88,8 +91,10 @@ To use the library on the desktop (tests, example sketches, desktop player), see
 The library is published under the [GNU General Public License v3.0](LICENSE).
 
 The sample data (`src/samples`, `data`) is in the public domain
-([CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)); the tonewheel
-organ is synthesized and uses no samples:
+([CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)), except the
+electric piano: [CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/), which
+requires attribution ("Wurlitzer samples by Greg Sullivan"). The tonewheel organ
+is synthesized and uses no samples:
 
 | Sample set | Source |
 |---|---|
@@ -99,3 +104,5 @@ organ is synthesized and uses no samples:
 | ElectricGuitar | [FreePats Electric Guitar FSBS](https://freepats.zenvoid.org/ElectricGuitar/clean-electric-guitar.html) |
 | ElectricBass | [Karoryfer Growlybass](https://github.com/sfzinstruments/karoryfer.growlybass) |
 | Clarinet | [VSCO 2 Community Edition](https://github.com/sgossner/VSCO-2-CE) |
+| UprightBass | [Karoryfer Meatbass](https://github.com/sfzinstruments/karoryfer.meatbass) |
+| Wurlitzer (CC-BY 3.0) | [Greg Sullivan's E-Pianos](https://github.com/sfzinstruments/GregSullivan.E-Pianos), Wurlitzer EP200 by [Greg Sullivan](http://www.sullivang.net/) |

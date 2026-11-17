@@ -51,7 +51,7 @@ DynamicSampleSet upright_samples, grand_samples, drum_samples, sax_samples, clar
 
 // the instruments: playing parameters for the sample sets
 Instrument upright, grand, drums, sax, clarinet, guitar, bass, epiano, upright_bass;
-Tremolo tremolo(5.5f, 0.3f);  // electric piano: CC1 depth
+TremoloEffect tremolo(5.5f, 0.3f);  // electric piano: CC1 depth
 GuitarAmp clean_amp(GuitarAmp::Clean), crunch_amp(GuitarAmp::Crunch),
     lead_amp(GuitarAmp::Lead), bass_amp(GuitarAmp::Bass);
 // the synthesized organs: registration and rotary speaker (CC1: fast/slow)

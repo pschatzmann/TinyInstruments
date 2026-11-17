@@ -60,6 +60,8 @@ To use another instrument, include its header and use the matching preset:
 | Electric guitar | `samples/ElectricGuitar.h` | `GuitarInstrument(ElectricGuitar())` + `GuitarAmp` effect | any |
 | Clarinet | `samples/Clarinet.h` | `ClarinetInstrument(Clarinet())` | any |
 | Electric bass | `samples/ElectricBass.h` | `BassInstrument(ElectricBass())` + `GuitarAmp(GuitarAmp::Bass)` | any |
+| Electric piano | `samples/Wurlitzer.h` | `ElectricPianoInstrument(Wurlitzer())` + optional `TremoloEffect` | any |
+| Upright bass | `samples/UprightBass.h` | `UprightBassInstrument(UprightBass())` | any |
 | Tonewheel organ | - (synthesized) | `OrganInstrument(organ)` with `TonewheelOrgan organ("888000000")` + `RotarySpeaker` | any |
 
 Each instrument also has a small version (~250 KB instead of ~700 KB), e.g.
@@ -92,9 +94,10 @@ card, midi on stdin, the GUI in a window): see
 | [bass-serial-midi](../examples/bass-serial-midi) | electric bass with amplifier, serial midi input | default |
 | [clarinet-serial-midi](../examples/clarinet-serial-midi) | clarinet, serial midi input | default |
 | [organ-serial-midi](../examples/organ-serial-midi) | tonewheel organ with rotary speaker (synthesized), serial midi input | default |
+| [jazz-trio-serial-midi](../examples/jazz-trio-serial-midi) | electric piano (channel 1), upright bass (channel 2) and drums (channel 10), small versions | default |
 | [piano-ble-midi](../examples/piano-ble-midi) | piano, BLE midi input | Huge APP |
 | [piano-drums-serial-midi](../examples/piano-drums-serial-midi) | grand piano and drums (channel 10) | Huge APP |
 | [file-psram-serial-midi](../examples/file-psram-serial-midi) | instrument loaded from LittleFS into PSRAM | with file system |
 | [all-instruments](../examples/all-instruments) | all instruments loaded from LittleFS into PSRAM, selected with program changes (General MIDI) | own partitions.csv (16 MB flash) |
-| [material-gui](../examples/material-gui) | touch GUI ([TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign)) for the ESP32-S3 2.8" display board: on-screen piano keyboard, midi input via serial/TCP/UDP, output via I2S or forwarded midi (serial/TCP/UDP) | 3 MB APP (e.g. Huge APP) |
+| [material-gui](../examples/material-gui) | touch GUI ([TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign)) for the ESP32-S3 2.8" display board: on-screen piano keyboard, midi input via serial/TCP/UDP, output via I2S or forwarded midi (serial/TCP/UDP) | Custom: own partitions.csv (16 MB flash, 6 MB application) |
 | [benchmark](../examples/benchmark) | measures the CPU load (piano, guitar with amp) | Huge APP |

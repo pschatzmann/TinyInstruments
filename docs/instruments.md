@@ -1,8 +1,9 @@
 # Instruments
 
 An `Instrument` combines a sample set (the recorded sounds) with the
-parameters which define how it is played. The included sample sets are all
-CC0 (public domain) and need about 700 KB each (smaller versions: see
+parameters which define how it is played. The included sample sets are
+CC0 (public domain), except the electric piano (CC-BY 3.0: attribution
+required), and need about 700 KB each (smaller versions: see
 [Versions and sizes](#versions-and-sizes)):
 
 | Instrument | Sample set | Preset | Source | Details |
@@ -14,6 +15,8 @@ CC0 (public domain) and need about 700 KB each (smaller versions: see
 | Electric guitar | `ElectricGuitar()` | `GuitarInstrument()` + `GuitarAmp` | FreePats Electric Guitar FSBS | [Electric Guitar](guitar.md) |
 | Clarinet | `Clarinet()` | `ClarinetInstrument()` | VSCO 2 Community Edition | [Clarinet](clarinet.md) |
 | Electric bass | `ElectricBass()` | `BassInstrument()` + `GuitarAmp(GuitarAmp::Bass)` | Karoryfer Growlybass | [Electric Bass](bass.md) |
+| Electric piano (Wurlitzer) | `Wurlitzer()` | `ElectricPianoInstrument()` + `TremoloEffect` | Greg Sullivan Wurlitzer EP200 (CC-BY 3.0) | [Electric Piano](electric-piano.md) |
+| Upright bass | `UprightBass()` | `UprightBassInstrument()` | Karoryfer Meatbass | [Upright Bass](upright-bass.md) |
 
 In addition there is a synthesized instrument which needs no sample data:
 
@@ -61,6 +64,12 @@ Instrument piano = PianoInstrument(GrandPianoSmall());
 | Electric bass | full | `data/ElectricBass.bin` | `ElectricBass.h` | 700 KB | 14 | 2 | 32.00 kHz | 0.4 dB | - |
 | Electric bass | small | `data/ElectricBassSmall.bin` | `ElectricBassSmall.h` | 250 KB | 14 | 1 | 22.05 kHz | 0.6 dB | - |
 | Electric bass | octave | `data/ElectricBassOctave.bin` | `ElectricBassOctave.h` | 150 KB | 4 | 1 | 22.05 kHz | 0.6 dB | 8.8 dB |
+| Electric piano | full | `data/Wurlitzer.bin` | `Wurlitzer.h` | 696 KB | 20 | 4 | 32.00 kHz | 3.1 dB | - |
+| Electric piano | small | `data/WurlitzerSmall.bin` | `WurlitzerSmall.h` | 245 KB | 13 | 1 | 22.05 kHz | 5.1 dB | - |
+| Electric piano | octave | `data/WurlitzerOctave.bin` | `WurlitzerOctave.h` | 136 KB | 5 | 1 | 22.05 kHz | 4.6 dB | 6.7 dB |
+| Upright bass | full | `data/UprightBass.bin` | `UprightBass.h` | 700 KB | 14 | 2 | 32.00 kHz | 0.2 dB | - |
+| Upright bass | small | `data/UprightBassSmall.bin` | `UprightBassSmall.h` | 250 KB | 14 | 1 | 22.05 kHz | 0.3 dB | - |
+| Upright bass | octave | `data/UprightBassOctave.bin` | `UprightBassOctave.h` | 150 KB | 4 | 1 | 22.05 kHz | 0.2 dB | 6.6 dB |
 
 ¹ Spectral difference of the recorded notes: the playback (loop, decay,
 ADPCM) is compared with the original recording, as RMS difference of the third
@@ -82,13 +91,13 @@ choose one.
 
 The presets cover different ways of playing:
 
-| | Piano | Drums | Saxophone, clarinet | Electric guitar, bass | Organ |
+| | Piano, electric piano | Drums | Saxophone, clarinet | Electric guitar, basses | Organ |
 |---|---|---|---|---|---|
 | sound | decays naturally | one shot, decays naturally | sustained while the key is pressed | decays naturally | sustained while the key is pressed |
 | note off | release (dampers), sustain pedal | ignored | release | release | stops within 30 ms |
 | notes | 10 (polyphonic) | 8 | 1 (monophonic, legato) | 6 / 4 (strings) | 10 (polyphonic) |
 | key mapping | closest zone, transposed | exact keys (General MIDI) | closest zone, transposed | closest zone, transposed | synthesized |
-| special | keys without dampers, stereo spread | choke groups (hi-hat) | vibrato, breath controller | amplifier effect, palm mute, vibrato | drawbars, percussion, rotary speaker, not velocity sensitive |
+| special | keys without dampers (piano), stereo spread, tremolo (electric piano) | choke groups (hi-hat) | vibrato, breath controller | amplifier effect, palm mute (electric guitar and bass), vibrato | drawbars, percussion, rotary speaker, not velocity sensitive |
 
 ## Parameters
 

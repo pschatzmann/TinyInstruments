@@ -28,7 +28,7 @@ SampleSynthesizer synth;
 Instrument epiano = ElectricPianoInstrument(WurlitzerSmall());
 Instrument bass = UprightBassInstrument(UprightBassSmall());
 Instrument drums = DrumInstrument(DrumKitSmall());
-Tremolo tremolo(5.5f, 0.3f);  // the built-in "vibrato" of the Wurlitzer
+TremoloEffect tremolo(5.5f, 0.3f);  // the built-in "vibrato" of the Wurlitzer
 SampleSynthesizerStream in(synth);
 I2SStream out;
 StreamCopy copier(out, in);

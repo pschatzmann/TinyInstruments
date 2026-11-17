@@ -20,7 +20,7 @@ namespace tinyinstruments {
  * | 1 (modulation wheel) | depth |
  * | 76 | rate (1 - 10 Hz) |
  */
-class Tremolo : public ChannelEffect {
+class TremoloEffect : public ChannelEffect {
  public:
   /**
    * @param rateHz speed of the modulation (Wurlitzer: ~5.5 Hz)
@@ -28,7 +28,7 @@ class Tremolo : public ChannelEffect {
    * @param stereo false: both channels together (tremolo), true: left and
    * right in opposite phase (auto pan)
    */
-  explicit Tremolo(float rateHz = 5.5f, float depth = 0.4f, bool stereo = false)
+  explicit TremoloEffect(float rateHz = 5.5f, float depth = 0.4f, bool stereo = false)
       : rate_hz(rateHz), depth(depth), stereo(stereo) {}
 
   void setRate(float hz) { rate_hz = hz < 0.1f ? 0.1f : hz; }

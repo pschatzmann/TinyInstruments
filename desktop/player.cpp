@@ -379,7 +379,7 @@ int main(int argc, char** argv) {
   if (type == "organ" && opt.leslie != "off") synth.setEffect(channel, &rotary);
   // tremolo (electric piano)
   float tremolo_depth = opt.tremolo >= 0 ? opt.tremolo : (type == "epiano" ? 0.3f : 0.0f);
-  Tremolo tremolo(5.5f, tremolo_depth);
+  TremoloEffect tremolo(5.5f, tremolo_depth);
   if (tremolo_depth > 0) synth.setEffect(channel, &tremolo);
   synth.setVolume(opt.volume);
   synth.begin(opt.rate);
