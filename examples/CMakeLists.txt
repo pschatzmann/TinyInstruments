@@ -51,6 +51,12 @@ if(NOT TARGET arduino-midi)
     ti_library(arduino-midi https://github.com/pschatzmann/arduino-midi.git)
 endif()
 
+# arduino-midi-fileparser (midi-file-player): header only
+if(NOT TARGET midi-file)
+    set(CMAKE_POLICY_VERSION_MINIMUM 3.5)  # its CMakeLists.txt requires CMake 3.0
+    ti_library(arduino-midi-fileparser https://github.com/pschatzmann/arduino-midi-fileparser.git)
+endif()
+
 # --- miniaudio: the sound card (MiniAudioStream of arduino-audio-tools)
 FetchContent_Declare(miniaudio
     GIT_REPOSITORY https://github.com/mackron/miniaudio.git
@@ -92,6 +98,8 @@ foreach(example
     ti_example(${example})
 endforeach()
 
+ti_example(midi-file-player midi-file)
+
 # --- material-gui: display and touch in an SDL window (TinyGPU), the codec of
 # the board is replaced by the sound card (I2SCodecStream of
 # arduino-audio-tools, without arduino-audio-driver)
@@ -128,7 +136,7 @@ if(UNIX)
         piano-demo drum-demo benchmark
         piano-serial-midi sax-serial-midi guitar-serial-midi bass-serial-midi
         clarinet-serial-midi organ-serial-midi jazz-trio-serial-midi piano-drums-serial-midi piano-ble-midi
-        file-psram-serial-midi all-instruments)
+        file-psram-serial-midi all-instruments midi-file-player)
     if(TARGET material-gui)
         list(APPEND TI_EXAMPLE_TESTS material-gui)
     endif()

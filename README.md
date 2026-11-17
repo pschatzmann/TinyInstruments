@@ -19,6 +19,7 @@ tonewheel organ.
 - 10 piano notes need about 29% of one core of an ESP32-S3
 - Examples from simple serial midi sketches up to a touch GUI with an on-screen
   piano keyboard ([TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign))
+  and a player for General MIDI files ([arduino-midi-fileparser](https://github.com/pschatzmann/arduino-midi-fileparser))
 - All example sketches also build and run unchanged on the desktop
   ([Arduino-Emulator](https://github.com/pschatzmann/Arduino-Emulator))
 - Desktop player for a USB midi keyboard, which can also forward the midi to a
@@ -53,6 +54,7 @@ versions of an instrument). Details and quality measurements:
 - [Getting Started](docs/getting-started.md) (with the list of [examples](docs/getting-started.md#examples))
 - [Instruments](docs/instruments.md): [Pianos](docs/piano.md), [Electric Piano](docs/electric-piano.md), [Drum Kit](docs/drums.md), [Saxophone](docs/saxophone.md), [Clarinet](docs/clarinet.md), [Electric Guitar](docs/guitar.md), [Electric Bass](docs/bass.md), [Upright Bass](docs/upright-bass.md), [Tonewheel Organ](docs/organ.md)
 - [Loading Sample Sets from Files / PSRAM](docs/loading.md)
+- [Playing MIDI Files](docs/midi-files.md)
 - [Performance](docs/performance.md)
 - [Desktop Player](docs/desktop.md)
 - [Design](docs/design.md)
@@ -73,6 +75,12 @@ The examples also need the following libraries, which are installed the same way
 ```
 git clone https://github.com/pschatzmann/arduino-audio-tools.git
 git clone https://github.com/pschatzmann/arduino-midi.git
+```
+
+The [midi-file-player](examples/midi-file-player) example additionally needs:
+
+```
+git clone https://github.com/pschatzmann/arduino-midi-fileparser.git
 ```
 
 The [material-gui](examples/material-gui) example additionally needs:

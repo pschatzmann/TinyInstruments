@@ -120,7 +120,14 @@ rock organ with all drawbars and overdrive), in
 ## Performance
 
 A note computes one sine per active drawbar (table with interpolation) instead
-of decoding samples. On the desktop, 10 notes need about 1.4 times the CPU of
-the piano with 3 drawbars (`888000000`) and about 2.5 times with all 9
-drawbars; the rotary speaker adds little. Measure it on your microcontroller
-with the [benchmark](../examples/benchmark) example.
+of decoding samples. Measured with the [benchmark](../examples/benchmark) on an
+ESP32-S3 (240 MHz), 10 notes:
+
+| Registration | CPU (one core) |
+|---|---|
+| `888000000` (3 drawbars) | 42.0% |
+| `888888888` (9 drawbars) | 66.9% |
+| `888888888` + `RotarySpeaker` | 71.5% |
+
+For comparison: 10 piano notes need 29.5%. The rotary speaker needs about
+4.6%, independent of the number of notes. See [Performance](performance.md).

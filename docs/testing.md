@@ -78,7 +78,7 @@ are provided by the libraries and, for the hardware of material-gui, by
 | display board `LCDBoardESP32S3_2_8Display` | SDL window (240x320), mouse as touch | [DesktopBoards.h](../desktop/emulator/DesktopBoards.h) |
 | audio board `ESP32S3HosyondDisplay` | placeholder: arduino-audio-driver is not used on the desktop | [AudioBoards/ESP32S3HosyondDisplay.h](../desktop/emulator/AudioBoards/ESP32S3HosyondDisplay.h) |
 
-arduino-audio-tools, arduino-midi, TinyMaterialDesign and TinyGPU are used
+arduino-audio-tools, arduino-midi, arduino-midi-fileparser, TinyMaterialDesign and TinyGPU are used
 from the sibling directories (Arduino libraries folder) if available,
 otherwise they are downloaded together with the Arduino-Emulator and
 miniaudio. Use `-DFETCHCONTENT_SOURCE_DIR_ARDUINO_EMULATOR=<dir>` for a local

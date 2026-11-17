@@ -5,7 +5,9 @@ and [arduino-midi](https://github.com/pschatzmann/arduino-midi). The
 [material-gui](../examples/material-gui) example also needs
 [TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign),
 [TinyGPU](https://github.com/pschatzmann/TinyGPU) and
-[arduino-audio-driver](https://github.com/pschatzmann/arduino-audio-driver).
+[arduino-audio-driver](https://github.com/pschatzmann/arduino-audio-driver), the
+[midi-file-player](../examples/midi-file-player) example
+[arduino-midi-fileparser](https://github.com/pschatzmann/arduino-midi-fileparser).
 
 A sketch consists of:
 
@@ -94,6 +96,7 @@ card, midi on stdin, the GUI in a window): see
 | [bass-serial-midi](../examples/bass-serial-midi) | electric bass with amplifier, serial midi input | default |
 | [clarinet-serial-midi](../examples/clarinet-serial-midi) | clarinet, serial midi input | default |
 | [organ-serial-midi](../examples/organ-serial-midi) | tonewheel organ with rotary speaker (synthesized), serial midi input | default |
+| [midi-file-player](../examples/midi-file-player) | plays a midi file ([arduino-midi-fileparser](https://github.com/pschatzmann/arduino-midi-fileparser)), the General MIDI programs select the instruments, see [Playing MIDI Files](midi-files.md) | Huge APP |
 | [jazz-trio-serial-midi](../examples/jazz-trio-serial-midi) | electric piano (channel 1), upright bass (channel 2) and drums (channel 10), small versions | default |
 | [piano-ble-midi](../examples/piano-ble-midi) | piano, BLE midi input | Huge APP |
 | [piano-drums-serial-midi](../examples/piano-drums-serial-midi) | grand piano and drums (channel 10) | Huge APP |

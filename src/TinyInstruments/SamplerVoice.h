@@ -107,9 +107,7 @@ class SamplerVoice {
     }
     // history: x[-1], x[0], x[1], x[2]
     hist[0] = 0.0f;
-    hist[1] = nextSample();
-    hist[2] = nextSample();
-    hist[3] = nextSample();
+    for (int j = 1; j < 4; j++) hist[j] = use_organ ? nextSample<true>() : nextSample<false>();
     frac = 0.0f;
     state = Playing;
   }
@@ -183,47 +181,12 @@ class SamplerVoice {
   /// once per block and interpolated linearly inside of the block.
   void render(float* out_left, float* out_right, int frames) {
     if (state == Idle || frames <= 0) return;
-    updateVibrato(frames);
-    float amp = amplitude();
-    advanceEnvelopes(frames);
-    float amp_inc = (amplitude() - amp) / frames;
-
-    // local copies: the compiler can keep them in registers (the output
-    // buffers could otherwise alias the members)
-    float f = frac, st = step, lp = lp_state, lc = lp_coef, l = left, r = right;
-    float h0 = hist[0], h1 = hist[1], h2 = hist[2], h3 = hist[3];
-    for (int j = 0; j < frames; j++) {
-      // 4 point, 3rd order hermite interpolation
-      float c1 = 0.5f * (h2 - h0);
-      float c2 = h0 - 2.5f * h1 + 2.0f * h2 - 0.5f * h3;
-      float c3 = 0.5f * (h3 - h0) + 1.5f * (h1 - h2);
-      float sample = ((c3 * f + c2) * f + c1) * f + h1;
-
-      lp += lc * (sample - lp);
-      float out = lp * amp;
-      amp += amp_inc;
-      out_left[j] += out * l;
-      out_right[j] += out * r;
-
-      f += st;
-      while (f >= 1.0f) {
-        f -= 1.0f;
-        h0 = h1;
-        h1 = h2;
-        h2 = h3;
-        h3 = nextSample();
-      }
+    // the source is selected once per block: no check per sample
+    if (use_organ) {
+      renderBlock<true>(out_left, out_right, frames);
+    } else {
+      renderBlock<false>(out_left, out_right, frames);
     }
-    frac = f;
-    lp_state = lp;
-    hist[0] = h0;
-    hist[1] = h1;
-    hist[2] = h2;
-    hist[3] = h3;
-    elapsed += frames;
-
-    // end: silent or no more data
-    if (decay_env * release_env < 0.0001f || ended > 4) state = Idle;
   }
 
   State getState() const { return state; }
@@ -340,8 +303,56 @@ class SamplerVoice {
     step = base_step * pitch_factor * (1.0f + depth * 0.000577623f * sinf(lfo_phase));
   }
 
+  /// Renders a block: ORGAN selects the source at compile time
+  template <bool ORGAN>
+  void renderBlock(float* out_left, float* out_right, int frames) {
+    updateVibrato(frames);
+    float amp = amplitude();
+    advanceEnvelopes(frames);
+    float amp_inc = (amplitude() - amp) / frames;
+
+    // local copies: the compiler can keep them in registers (the output
+    // buffers could otherwise alias the members)
+    float f = frac, st = step, lp = lp_state, lc = lp_coef, l = left, r = right;
+    float h0 = hist[0], h1 = hist[1], h2 = hist[2], h3 = hist[3];
+    for (int j = 0; j < frames; j++) {
+      // 4 point, 3rd order hermite interpolation
+      float c1 = 0.5f * (h2 - h0);
+      float c2 = h0 - 2.5f * h1 + 2.0f * h2 - 0.5f * h3;
+      float c3 = 0.5f * (h3 - h0) + 1.5f * (h1 - h2);
+      float sample = ((c3 * f + c2) * f + c1) * f + h1;
+
+      lp += lc * (sample - lp);
+      float out = lp * amp;
+      amp += amp_inc;
+      out_left[j] += out * l;
+      out_right[j] += out * r;
+
+      f += st;
+      while (f >= 1.0f) {
+        f -= 1.0f;
+        h0 = h1;
+        h1 = h2;
+        h2 = h3;
+        h3 = nextSample<ORGAN>();
+      }
+    }
+    frac = f;
+    lp_state = lp;
+    hist[0] = h0;
+    hist[1] = h1;
+    hist[2] = h2;
+    hist[3] = h3;
+    elapsed += frames;
+
+    // end: silent or no more data
+    if (decay_env * release_env < 0.0001f || ended > 4) state = Idle;
+  }
+
+  /// Next sample of the source (ORGAN: tonewheel organ, otherwise the zone)
+  template <bool ORGAN>
   inline float nextSample() {
-    if (use_organ) return organ_source.next();
+    if (ORGAN) return organ_source.next();
     const SampleZone& z = *p_zone;
     if (use_psola) {
       float s = psola.next();
