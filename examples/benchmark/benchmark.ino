@@ -1,7 +1,8 @@
 /**
  * @file benchmark.ino
  * @brief Measures the CPU load of the synthesizer for 0..16 voices: piano,
- * guitar without and with the GuitarAmp presets. No audio output is needed:
+ * guitar without and with the GuitarAmp presets, tonewheel organ with 3 and 9
+ * drawbars and with rotary speaker. No audio output is needed:
  * the result is printed to the serial monitor.
  *
  * ESP32-S3 (16MB flash, PSRAM): Partition Scheme "16M Flash (3MB APP/9.9MB
@@ -76,6 +77,12 @@ void setup() {
   benchmark("Guitar+Clean", GuitarInstrument(ElectricGuitar()), notes, &clean);
   benchmark("Guitar+Crunch", GuitarInstrument(ElectricGuitar()), notes, &crunch);
   benchmark("Guitar+Lead", GuitarInstrument(ElectricGuitar()), notes, &lead);
+  // synthesized tonewheel organ: 3 and 9 drawbars, with rotary speaker
+  static TonewheelOrgan organ3("888000000"), organ9("888888888");
+  static RotarySpeaker leslie;
+  benchmark("Organ-3", OrganInstrument(organ3), notes, nullptr);
+  benchmark("Organ-9", OrganInstrument(organ9), notes, nullptr);
+  benchmark("Organ-9+Leslie", OrganInstrument(organ9), notes, &leslie);
   Serial.println("done");
 }
 

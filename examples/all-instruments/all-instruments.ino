@@ -7,6 +7,9 @@
  * |---------------------------------|--------------------------------|
  * | 0, 2-7 pianos                   | grand piano                    |
  * | 1 bright piano                  | upright piano                  |
+ * | 16, 19, 20 drawbar organs       | tonewheel organ, rotary speaker|
+ * | 17 percussive organ             | organ with percussion          |
+ * | 18 rock organ                   | organ, all drawbars, overdrive |
  * | 24-28, 31 guitars               | electric guitar, clean amp     |
  * | 29 overdriven guitar            | electric guitar, crunch amp    |
  * | 30 distortion guitar            | electric guitar, lead amp      |
@@ -17,7 +20,8 @@
  *
  * Requirements:
  * - ESP32 with 16 MB flash and PSRAM (e.g. ESP32-S3 N16R8): the sample sets
- *   need 4.9 MB of PSRAM. Enable PSRAM in the Tools menu.
+ *   need 4.9 MB of PSRAM (the organ is synthesized). Enable PSRAM in the Tools
+ *   menu.
  * - partitions.csv of this folder: 3 MB application, 12.9 MB LittleFS
  * - copy the files of the data folder of the library (*.bin) into the data
  *   folder of this sketch and upload them to LittleFS (e.g. with the
@@ -47,6 +51,10 @@ DynamicSampleSet upright_samples, grand_samples, drum_samples, sax_samples, clar
 Instrument upright, grand, drums, sax, clarinet, guitar, bass;
 GuitarAmp clean_amp(GuitarAmp::Clean), crunch_amp(GuitarAmp::Crunch),
     lead_amp(GuitarAmp::Lead), bass_amp(GuitarAmp::Bass);
+// the synthesized organs: registration and rotary speaker (CC1: fast/slow)
+TonewheelOrgan drawbar_organ("888000000"), percussive_organ("888000000"), rock_organ("888888888");
+Instrument drawbar, percussive, rock;
+RotarySpeaker leslie(0.1f), rock_leslie(0.6f);
 InstrumentBank bank;
 
 SampleSynthesizer synth;
@@ -103,6 +111,14 @@ void setupInstruments() {
     bank.setDrumKit(drums);
     synth.setInstrument(9, drums);  // General MIDI channel 10
   }
+  // organs: no sample data
+  percussive_organ.setPercussion(true, true, true);
+  drawbar = OrganInstrument(drawbar_organ);
+  percussive = OrganInstrument(percussive_organ);
+  rock = OrganInstrument(rock_organ);
+  bank.add(16, 20, drawbar, &leslie);
+  bank.add(17, 17, percussive, &leslie);
+  bank.add(18, 18, rock, &rock_leslie);
   synth.setInstrumentBank(&bank);
 }
 
@@ -124,6 +140,12 @@ void setup() {
   Serial.println("ready");
 }
 
+/// Name of an instrument: the sample set or "organ"
+const char* name(const Instrument& inst) {
+  if (inst.organ != nullptr) return "organ";
+  return inst.samples != nullptr ? inst.samples->name : "-";
+}
+
 /// Reports the program changes
 void printProgramChanges() {
   for (int ch = 0; ch < 16; ch++) {
@@ -131,7 +153,7 @@ void printProgramChanges() {
     if (program != last_program[ch]) {
       const InstrumentBank::Entry* entry = bank.find(ch, program);
       Serial.printf("channel %d: program %d = %s\n", ch + 1, program,
-                    entry ? entry->instrument->samples->name : "-");
+                    entry ? name(*entry->instrument) : "-");
       last_program[ch] = program;
     }
   }

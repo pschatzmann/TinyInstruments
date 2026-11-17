@@ -55,6 +55,7 @@ all midi inputs:
 ./build/desktop/tinyinstruments-player --instrument grand --drums
 ./build/desktop/tinyinstruments-player --instrument sax --port "USB"
 ./build/desktop/tinyinstruments-player --instrument guitar --amp lead
+./build/desktop/tinyinstruments-player --instrument organ --drawbars 888800000 --leslie fast
 ./build/desktop/tinyinstruments-player --file data/TenorSax.bin
 ./build/desktop/tinyinstruments-player --instrument bass
 ./build/desktop/tinyinstruments-player --instrument clarinet
@@ -69,7 +70,9 @@ Stop the player with Ctrl+C.
 | `--list` | list the midi input and output ports |
 | `--port N\|NAME` | midi input port number or part of its name (default: all) |
 | `--virtual` | open a virtual midi port `TinyInstruments` (e.g. for a DAW or `aconnect`) |
-| `--instrument NAME` | `upright`, `grand`, `drums`, `sax`, `clarinet`, `guitar` or `bass` (default: `grand`) |
+| `--instrument NAME` | `upright`, `grand`, `drums`, `sax`, `clarinet`, `guitar`, `bass` or `organ` (synthesized, see [Tonewheel Organ](organ.md)) (default: `grand`) |
+| `--drawbars DIGITS` | organ registration: 9 digits 0..8 (default: `888000000`) |
+| `--leslie MODE` | organ rotary speaker: `slow` (default), `fast` or `off`; the modulation wheel switches the speed |
 | `--file PATH` | load the sample set from a file (e.g. `data/GrandPiano.bin`) |
 | `--type TYPE` | `piano`, `drums`, `sax`, `clarinet`, `guitar` or `bass`: playing parameters for `--file` (default: from the file name) |
 | `--amp PRESET` | amplifier: `clean`, `crunch`, `lead`, `bass` or `off` (default: `crunch` for the guitar, `bass` for the bass, otherwise `off`) |

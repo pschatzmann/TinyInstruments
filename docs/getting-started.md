@@ -60,6 +60,7 @@ To use another instrument, include its header and use the matching preset:
 | Electric guitar | `samples/ElectricGuitar.h` | `GuitarInstrument(ElectricGuitar())` + `GuitarAmp` effect | any |
 | Clarinet | `samples/Clarinet.h` | `ClarinetInstrument(Clarinet())` | any |
 | Electric bass | `samples/ElectricBass.h` | `BassInstrument(ElectricBass())` + `GuitarAmp(GuitarAmp::Bass)` | any |
+| Tonewheel organ | - (synthesized) | `OrganInstrument(organ)` with `TonewheelOrgan organ("888000000")` + `RotarySpeaker` | any |
 
 Each instrument also has a small version (~250 KB instead of ~700 KB), e.g.
 `samples/GrandPianoSmall.h` with `PianoInstrument(GrandPianoSmall())`, and
@@ -90,6 +91,7 @@ card, midi on stdin, the GUI in a window): see
 | [guitar-serial-midi](../examples/guitar-serial-midi) | electric guitar with amplifier, serial midi input | default |
 | [bass-serial-midi](../examples/bass-serial-midi) | electric bass with amplifier, serial midi input | default |
 | [clarinet-serial-midi](../examples/clarinet-serial-midi) | clarinet, serial midi input | default |
+| [organ-serial-midi](../examples/organ-serial-midi) | tonewheel organ with rotary speaker (synthesized), serial midi input | default |
 | [piano-ble-midi](../examples/piano-ble-midi) | piano, BLE midi input | Huge APP |
 | [piano-drums-serial-midi](../examples/piano-drums-serial-midi) | grand piano and drums (channel 10) | Huge APP |
 | [file-psram-serial-midi](../examples/file-psram-serial-midi) | instrument loaded from LittleFS into PSRAM | with file system |

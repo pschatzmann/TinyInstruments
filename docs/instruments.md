@@ -15,6 +15,12 @@ CC0 (public domain) and need about 700 KB each (smaller versions: see
 | Clarinet | `Clarinet()` | `ClarinetInstrument()` | VSCO 2 Community Edition | [Clarinet](clarinet.md) |
 | Electric bass | `ElectricBass()` | `BassInstrument()` + `GuitarAmp(GuitarAmp::Bass)` | Karoryfer Growlybass | [Electric Bass](bass.md) |
 
+In addition there is a synthesized instrument which needs no sample data:
+
+| Instrument | Preset | Details |
+|---|---|---|
+| Tonewheel organ (Hammond style) | `OrganInstrument(TonewheelOrgan)` + `RotarySpeaker` | [Tonewheel Organ](organ.md) |
+
 ## Versions and sizes
 
 Each instrument is available in up to three versions:
@@ -76,13 +82,13 @@ choose one.
 
 The presets cover different ways of playing:
 
-| | Piano | Drums | Saxophone, clarinet | Electric guitar, bass |
-|---|---|---|---|---|
-| sound | decays naturally | one shot, decays naturally | sustained while the key is pressed | decays naturally |
-| note off | release (dampers), sustain pedal | ignored | release | release |
-| notes | 10 (polyphonic) | 8 | 1 (monophonic, legato) | 6 / 4 (strings) |
-| key mapping | closest zone, transposed | exact keys (General MIDI) | closest zone, transposed | closest zone, transposed |
-| special | keys without dampers, stereo spread | choke groups (hi-hat) | vibrato, breath controller | amplifier effect, palm mute, vibrato |
+| | Piano | Drums | Saxophone, clarinet | Electric guitar, bass | Organ |
+|---|---|---|---|---|---|
+| sound | decays naturally | one shot, decays naturally | sustained while the key is pressed | decays naturally | sustained while the key is pressed |
+| note off | release (dampers), sustain pedal | ignored | release | release | stops within 30 ms |
+| notes | 10 (polyphonic) | 8 | 1 (monophonic, legato) | 6 / 4 (strings) | 10 (polyphonic) |
+| key mapping | closest zone, transposed | exact keys (General MIDI) | closest zone, transposed | closest zone, transposed | synthesized |
+| special | keys without dampers, stereo spread | choke groups (hi-hat) | vibrato, breath controller | amplifier effect, palm mute, vibrato | drawbars, percussion, rotary speaker, not velocity sensitive |
 
 ## Parameters
 

@@ -4,6 +4,7 @@
 
 #include "Config.h"
 #include "ImaAdpcm.h"
+#include "Organ.h"
 #include "Psola.h"
 #include "SampleSet.h"
 
@@ -37,6 +38,31 @@ class SamplerVoice {
   void start(const SampleZone* zone, float step, float gain, float lowpass,
              float pan_left, float pan_right, bool fromLoop = false,
              float attackSamples = 0.0f, float psolaRatio = 0.0f) {
+    use_organ = false;
+    startImpl(zone, step, gain, lowpass, pan_left, pan_right, fromLoop, attackSamples, psolaRatio);
+  }
+
+  /**
+   * @brief Starts a note of a tonewheel organ: synthesized at the output
+   * sample rate, sustains until it is released
+   * @param organ registration
+   * @param note midi note
+   * @param sampleRate output sample rate
+   * @param percussion trigger the percussion
+   * @param gain amplitude
+   * @param pan_left, pan_right gains for the stereo panning
+   */
+  void startOrgan(const TonewheelOrgan* organ, uint8_t note, float sampleRate, bool percussion,
+                  float gain, float pan_left, float pan_right) {
+    use_organ = true;
+    organ_source.begin(organ, note, sampleRate, percussion, ++organ_seed + note);
+    startImpl(&organZone(), 1.0f, gain, 1.0f, pan_left, pan_right, false, 0.0f, 0.0f);
+  }
+
+ protected:
+  void startImpl(const SampleZone* zone, float step, float gain, float lowpass,
+                 float pan_left, float pan_right, bool fromLoop, float attackSamples,
+                 float psolaRatio) {
     p_zone = zone;
     base_step = step;
     pitch_factor = 1.0f;
@@ -62,12 +88,15 @@ class SamplerVoice {
     ended = 0;
     // PSOLA (falls back to resampling if the zone has no pitch marks or the
     // ring buffer can not be allocated)
-    use_psola = psolaRatio > 0.0f && psola.begin(zone, psolaRatio, fromLoop);
+    use_psola = !use_organ && psolaRatio > 0.0f && psola.begin(zone, psolaRatio, fromLoop);
     if (psolaRatio > 0.0f && !use_psola) {
       this->step = base_step = step * psolaRatio;
       decay_mul = expf(zone->decayLn * this->step);
     }
-    if (fromLoop && zone->isLooped()) {
+    if (use_organ) {
+      index = 0;
+      decay_active = false;
+    } else if (fromLoop && zone->isLooped()) {
       index = zone->loopStart;
       decoder.begin(zone->data, zone->loopStart, zone->loopPredictor, zone->loopIndex);
       decay_active = zone->decayStart <= zone->loopStart;
@@ -84,6 +113,8 @@ class SamplerVoice {
     frac = 0.0f;
     state = Playing;
   }
+
+ public:
 
   /// Starts the release: time in output samples to reach -60dB
   void release(float samples) {
@@ -204,6 +235,8 @@ class SamplerVoice {
   float currentStep() const { return step; }
   /// true if the transposition is done with PSOLA
   bool isPsola() const { return use_psola; }
+  /// true if the voice plays a tonewheel organ note
+  bool isOrgan() const { return use_organ; }
 
   // management data used by the SampleSynthesizer
   uint8_t channel = 0;
@@ -253,6 +286,17 @@ class SamplerVoice {
   // PSOLA pitch shifting
   PsolaSource psola;
   bool use_psola = false;
+  // tonewheel organ
+  OrganSource organ_source;
+  bool use_organ = false;
+  uint32_t organ_seed = 0;
+
+  /// Zone of the organ notes: no data, no decay
+  static const SampleZone& organZone() {
+    static const SampleZone zone = {nullptr, 0xFFFFFFFFu, 0, 0, 0, 0, 0xFFFFFFFFu, 0.0f, 60, 0, 127,
+                                    0, 127, 0, 0, 0, nullptr, 0};
+    return zone;
+  }
 
   /// Current output amplitude: envelopes and gains
   inline float amplitude() const {
@@ -297,6 +341,7 @@ class SamplerVoice {
   }
 
   inline float nextSample() {
+    if (use_organ) return organ_source.next();
     const SampleZone& z = *p_zone;
     if (use_psola) {
       float s = psola.next();

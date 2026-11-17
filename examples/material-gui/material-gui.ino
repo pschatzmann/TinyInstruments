@@ -28,7 +28,8 @@
  *
  * Instruments (compiled in, the small versions with 250 KB each): grand
  * piano, upright piano, electric guitar (clean amp), electric bass (bass
- * amp), tenor saxophone, clarinet, drum kit. They are selected with General
+ * amp), tenor saxophone, clarinet, drum kit, and the synthesized tonewheel
+ * organ with rotary speaker (no sample data). They are selected with General
  * MIDI program changes, so the selection is also forwarded.
  *
  * Requirements:
@@ -125,6 +126,9 @@ Instrument sax = SaxophoneInstrument(TenorSaxSmall());
 Instrument clarinet = ClarinetInstrument(ClarinetSmall());
 Instrument drums = DrumInstrument(DrumKitSmall());
 GuitarAmp clean_amp(GuitarAmp::Clean), bass_amp(GuitarAmp::Bass);
+TonewheelOrgan organ("888000000");  // synthesized: no sample data
+Instrument organ_instrument = OrganInstrument(organ);
+RotarySpeaker leslie(0.2f);
 InstrumentBank bank;
 
 /// The instruments of the GUI: General MIDI program or channel 10 (drums)
@@ -137,7 +141,7 @@ struct InstrumentInfo {
 const InstrumentInfo instruments[] = {
     {"Grand Piano", 0, 0, 48},  {"Upright Piano", 1, 0, 48}, {"E-Guitar", 27, 0, 48},
     {"E-Bass", 33, 0, 36},      {"Tenor Sax", 66, 0, 48},    {"Clarinet", 71, 0, 55},
-    {"Drum Kit", 0, 9, 36},
+    {"Organ", 16, 0, 48},       {"Drum Kit", 0, 9, 36},
 };
 const int instrument_count = sizeof(instruments) / sizeof(instruments[0]);
 int instrument = 0;
@@ -529,6 +533,7 @@ void setupAudio() {
   bank.add(32, 39, bass, &bass_amp);
   bank.add(64, 67, sax);
   bank.add(68, 71, clarinet);
+  bank.add(16, 20, organ_instrument, &leslie);
   bank.setDrumKit(drums);
   synth.setInstrumentBank(&bank);
   synth.setInstrument(-1, grand);

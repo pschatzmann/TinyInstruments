@@ -1,4 +1,5 @@
 #pragma once
+#include "Organ.h"
 #include "SampleSet.h"
 
 namespace tinyinstruments {
@@ -20,8 +21,11 @@ enum class PitchShift : uint8_t {
 struct Instrument {
   Instrument() = default;
   explicit Instrument(const SampleSet& set) : samples(&set) {}
+  explicit Instrument(TonewheelOrgan& tonewheels) : organ(&tonewheels) {}
 
   const SampleSet* samples = nullptr;
+  /// synthesized tonewheel organ instead of the samples
+  TonewheelOrgan* organ = nullptr;
 
   /// release time (to -60dB) in seconds for the lowest key (21) ...
   float releaseLow = 0.6f;
@@ -176,6 +180,21 @@ inline Instrument BassInstrument(const SampleSet& set) {
   bass.muteCutoff = 500.0f;
   bass.pitchShift = PitchShift::Psola;
   return bass;
+}
+
+/// Instrument with the parameters of a tonewheel organ (Hammond style, use it
+/// with a RotarySpeaker effect on the same channel): synthesized, no sample
+/// data; not velocity sensitive, sustains while the key is held
+inline Instrument OrganInstrument(TonewheelOrgan& organ) {
+  Instrument result(organ);
+  result.maxNotes = 10;
+  result.releaseLow = 0.03f;
+  result.releaseHigh = 0.03f;
+  result.velocityCurve = 0.0f;
+  result.minCutoff = 20000.0f;
+  result.stereoWidth = 0.0f;
+  result.restrikeTime = 0.01f;
+  return result;
 }
 
 /// Instrument with the parameters of an acoustic piano

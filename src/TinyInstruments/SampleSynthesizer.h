@@ -313,7 +313,7 @@ class SampleSynthesizer {
   void doNoteOn(uint8_t ch, uint8_t note, uint8_t velocity) {
     ChannelState& cs = channels[ch];
     const Instrument* inst = cs.instrument;
-    if (inst == nullptr || inst->samples == nullptr) return;
+    if (inst == nullptr || (inst->samples == nullptr && inst->organ == nullptr)) return;
     if (inst->monophonic) {
       bool legato = inst->legato && cs.held_count > 0;
       removeHeld(cs, note);
@@ -360,6 +360,10 @@ class SampleSynthesizer {
   void startNote(uint8_t ch, uint8_t note, uint8_t velocity, bool legato) {
     ChannelState& cs = channels[ch];
     const Instrument* inst = cs.instrument;
+    if (inst->organ != nullptr) {
+      startOrganNote(ch, note, velocity);
+      return;
+    }
     const SampleZone* zone = inst->samples->findZone(note, velocity, inst->exactKeys);
     if (zone == nullptr) return;
 
@@ -436,6 +440,43 @@ class SampleSynthesizer {
     v.age = ++note_counter;
   }
 
+  /// Starts a note of a tonewheel organ
+  void startOrganNote(uint8_t ch, uint8_t note, uint8_t velocity) {
+    ChannelState& cs = channels[ch];
+    const Instrument* inst = cs.instrument;
+    // single triggered percussion: only if no other key of the channel is held
+    bool percussion = true;
+    for (int j = 0; j < VOICE_COUNT; j++) {
+      SamplerVoice& v = voices[j];
+      if (v.isActive() && v.channel == ch && !v.fading && (v.key_down || v.sustained)) percussion = false;
+      // a note which is played again: fade out the old one
+      if (v.isActive() && !v.fading && v.channel == ch && v.note == note) {
+        v.release(inst->restrikeTime * sample_rate);
+        v.key_down = false;
+        v.sustained = false;
+        v.fading = true;
+      }
+    }
+    SamplerVoice& v = allocateVoice(ch, inst->maxNotes);
+    float gain = powf(velocity / 127.0f, inst->velocityCurve) * inst->volume;
+    float pos = ((float)note - 64.5f) / 44.0f * inst->stereoWidth;
+    if (pos < -1.0f) pos = -1.0f;
+    if (pos > 1.0f) pos = 1.0f;
+    float angle = (pos + 1.0f) * 0.78539816f;
+    v.startOrgan(inst->organ, note, (float)sample_rate, percussion, gain, cosf(angle) * 1.41421356f,
+                 sinf(angle) * 1.41421356f);
+    v.setPitchFactor(cs.bend);
+    v.setChannelGain(channelGain(cs), true);
+    v.setVibrato(inst->vibratoRate, inst->vibratoDepth * cs.modulation, 0.0f, 0.0f, 1.0f, sample_rate);
+    v.channel = ch;
+    v.note = note;
+    v.velocity = velocity;
+    v.key_down = true;
+    v.sustained = false;
+    v.fading = false;
+    v.age = ++note_counter;
+  }
+
   void doNoteOff(uint8_t ch, uint8_t note) {
     ChannelState& cs = channels[ch];
     const Instrument* inst = cs.instrument;
@@ -475,6 +516,8 @@ class SampleSynthesizer {
   void doControlChange(uint8_t ch, uint8_t controller, uint8_t value) {
     ChannelState& cs = channels[ch];
     if (cs.effect != nullptr) cs.effect->controlChange(controller, value);
+    if (cs.instrument != nullptr && cs.instrument->organ != nullptr)
+      cs.instrument->organ->controlChange(controller, value);
     if (cs.instrument != nullptr && controller == cs.instrument->muteController &&
         controller != 0) {
       cs.mute = value >= 64;

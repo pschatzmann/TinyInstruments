@@ -166,5 +166,44 @@ int main(int argc, char** argv) {
       count++;
     }
   }
+  // the synthesized tonewheel organ with rotary speaker: blues in C, the
+  // rotary speaker changes from slow to fast in the middle
+  {
+    TonewheelOrgan organ("888000000");
+    RotarySpeaker leslie(0.3f);
+    Instrument inst = OrganInstrument(organ);
+    synth.begin(RATE);
+    synth.setInstrument(-1, inst);
+    synth.setEffect(-1, &leslie);
+    out.clear();
+    play(0.1f);
+    int chords[][4] = {{48, 52, 55, 58}, {53, 57, 60, 63}, {48, 52, 55, 58}, {55, 59, 62, 65}};
+    for (int bar = 0; bar < 4; bar++) {
+      if (bar == 2) synth.controlChange(0, 1, 127);  // fast
+      for (int n : chords[bar]) synth.noteOn(0, n, 100);
+      play(0.9f);
+      for (int n : chords[bar]) synth.noteOff(0, n);
+      play(0.1f);
+    }
+    // a lick with percussion
+    organ.setPercussion(true, true, true, false);
+    int lick[] = {72, 75, 76, 79, 82, 79, 76, 72};
+    for (int n : lick) {
+      synth.noteOn(0, n, 100);
+      play(0.16f);
+      synth.noteOff(0, n);
+      play(0.04f);
+    }
+    organ.setPercussion(false);
+    synth.controlChange(0, 1, 0);  // slow
+    for (int n : {36, 48, 52, 55, 58, 64}) synth.noteOn(0, n, 100);
+    play(2.5f);
+    for (int n : {36, 48, 52, 55, 58, 64}) synth.noteOff(0, n);
+    play(0.5f);
+    std::string path = dir + "/TonewheelOrgan.wav";
+    writeWav(path);
+    printf("written %s (%.1f s)\n", path.c_str(), out.size() / 2.0 / RATE);
+    count++;
+  }
   return count > 0 ? 0 : 1;
 }

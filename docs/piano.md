@@ -15,7 +15,7 @@ Instrument piano = PianoInstrument(GrandPiano());
 
 Smaller versions (one velocity layer, 22 kHz): `UprightPianoKWSmall()` and
 `GrandPianoSmall()` (~250 KB, `samples/...Small.h`), and the octave versions
-(~150 KB, only as data file). See [Versions and sizes](instruments.md#versions-and-sizes).
+`UprightPianoKWOctave()` and `GrandPianoOctave()` (~150 KB, `samples/...Octave.h`). See [Versions and sizes](instruments.md#versions-and-sizes).
 
 ## Fitting into flash
 

@@ -19,6 +19,8 @@
 #include "TinyInstruments/Biquad.h"
 #include "TinyInstruments/ChannelEffect.h"
 #include "TinyInstruments/GuitarAmp.h"
+#include "TinyInstruments/Organ.h"
+#include "TinyInstruments/RotarySpeaker.h"
 
 #ifndef TI_NO_NAMESPACE
 using namespace tinyinstruments;

@@ -8,6 +8,7 @@
  *   tinyinstruments-player --instrument grand --drums
  *   tinyinstruments-player --file data/TenorSax.bin --type sax
  *   tinyinstruments-player --instrument guitar --amp lead
+ *   tinyinstruments-player --instrument organ --drawbars 888800000 --leslie fast
  *   tinyinstruments-player --virtual --wav out.wav --seconds 10
  *   tinyinstruments-player --send tcp:192.168.1.40 --no-audio
  *
@@ -54,6 +55,8 @@ struct Options {
   std::string port;
   std::string wav;
   std::string amp;  // clean, crunch, lead, off (default: crunch for the guitar)
+  std::string drawbars = "888000000";  // organ registration
+  std::string leslie = "slow";         // organ rotary speaker: slow, fast, off
   std::vector<std::string> send;  // forward targets
   bool audio = true;
   int channel = 0;  // 1..16, 0 = all
@@ -74,7 +77,11 @@ static void usage() {
       "  --list                 list the midi input and output ports\n"
       "  --port N|NAME          midi input port number or part of the name (default: all)\n"
       "  --virtual              open a virtual midi input port 'TinyInstruments'\n"
-      "  --instrument NAME      upright | grand | drums | sax | clarinet | guitar | bass\n"
+      "  --instrument NAME      upright | grand | drums | sax | clarinet | guitar | bass |\n"
+      "                         organ (synthesized tonewheel organ)\n"
+      "  --drawbars DIGITS      organ registration, 9 digits 0..8 (default: 888000000)\n"
+      "  --leslie MODE          organ rotary speaker: slow | fast | off (default: slow,\n"
+      "                         modulation wheel: fast/slow)\n"
       "                         (default: grand)\n"
       "  --file PATH            load the sample set from a file (e.g. data/GrandPiano.bin)\n"
       "  --type TYPE            piano | drums | sax | clarinet | guitar | bass: playing\n"
@@ -113,6 +120,8 @@ static bool parseArgs(int argc, char** argv, Options& opt) {
     else if (a == "--port") opt.port = next();
     else if (a == "--virtual") opt.virtual_port = true;
     else if (a == "--instrument") opt.instrument = next();
+    else if (a == "--drawbars") opt.drawbars = next();
+    else if (a == "--leslie") opt.leslie = next();
     else if (a == "--file") opt.file = next();
     else if (a == "--type") opt.type = next();
     else if (a == "--amp") opt.amp = next();
@@ -296,6 +305,8 @@ int main(int argc, char** argv) {
              : opt.file.find("Guitar") != std::string::npos ? "guitar"
                                                              : "piano";
     }
+  } else if (opt.instrument == "organ") {
+    type = "organ";
   } else if (opt.instrument == "upright") {
     set = &UprightPianoKW();
     type = "piano";
@@ -322,7 +333,9 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  Instrument instrument = type == "drums"    ? DrumInstrument(*set)
+  TonewheelOrgan organ(opt.drawbars.c_str());
+  Instrument instrument = type == "organ"    ? OrganInstrument(organ)
+                          : type == "drums"    ? DrumInstrument(*set)
                           : type == "sax"    ? SaxophoneInstrument(*set)
                           : type == "guitar" ? GuitarInstrument(*set)
                           : type == "bass"   ? BassInstrument(*set)
@@ -342,9 +355,15 @@ int main(int argc, char** argv) {
                 : amp_name == "bass" ? GuitarAmp::Bass
                                      : GuitarAmp::Crunch);
   if (amp_name != "off") synth.setEffect(channel, &amp);
+  // rotary speaker of the organ
+  RotarySpeaker rotary;
+  rotary.setFast(opt.leslie == "fast");
+  if (type == "organ" && opt.leslie != "off") synth.setEffect(channel, &rotary);
   synth.setVolume(opt.volume);
   synth.begin(opt.rate);
-  printf("instrument: %s (%s, %u bytes)%s%s%s\n", set->name, type.c_str(),
+  if (type == "organ")
+    printf("instrument: tonewheel organ, drawbars %s, leslie %s\n", opt.drawbars.c_str(), opt.leslie.c_str());
+  else printf("instrument: %s (%s, %u bytes)%s%s%s\n", set->name, type.c_str(),
          (unsigned)set->dataSize, opt.drums ? " + drums on channel 10" : "",
          amp_name != "off" ? ", amp: " : "", amp_name != "off" ? amp_name.c_str() : "");
 

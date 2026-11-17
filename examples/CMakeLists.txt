@@ -87,7 +87,7 @@ endfunction()
 foreach(example
         piano-demo drum-demo benchmark
         piano-serial-midi sax-serial-midi guitar-serial-midi bass-serial-midi
-        clarinet-serial-midi piano-drums-serial-midi piano-ble-midi
+        clarinet-serial-midi organ-serial-midi piano-drums-serial-midi piano-ble-midi
         file-psram-serial-midi all-instruments)
     ti_example(${example})
 endforeach()
@@ -127,7 +127,7 @@ if(UNIX)
     set(TI_EXAMPLE_TESTS
         piano-demo drum-demo benchmark
         piano-serial-midi sax-serial-midi guitar-serial-midi bass-serial-midi
-        clarinet-serial-midi piano-drums-serial-midi piano-ble-midi
+        clarinet-serial-midi organ-serial-midi piano-drums-serial-midi piano-ble-midi
         file-psram-serial-midi all-instruments)
     if(TARGET material-gui)
         list(APPEND TI_EXAMPLE_TESTS material-gui)

@@ -4,16 +4,18 @@
 [![CMake](https://img.shields.io/badge/CMake-Supported-blue.svg)](https://github.com/pschatzmann/TinyInstruments/blob/main/CMakeLists.txt)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Header only, sample based musical instruments for microcontrollers: realistic
-sound which fits into the flash memory of an ESP32.
+Header only musical instruments for microcontrollers: realistic, sample based
+sound which fits into the flash memory of an ESP32, and a synthesized
+tonewheel organ.
 
 - Instruments (CC0, ~700 KB each): upright piano, grand piano, drum kit, tenor saxophone,
   electric guitar with amplifier, electric bass, clarinet
-- Smaller versions with ~250 KB and ~150 KB ([versions and sizes](docs/instruments.md#versions-and-sizes))
+- Tonewheel organ (Hammond style) with rotary speaker (Leslie): synthesized, no sample data
+- Smaller versions with ~250 KB and ~150 KB, also as headers ([versions and sizes](docs/instruments.md#versions-and-sizes))
 - Sample data compiled into flash, or loaded at runtime from any Stream (e.g. a file) into PSRAM
 - Output via [arduino-audio-tools](https://github.com/pschatzmann/arduino-audio-tools),
   input via [arduino-midi](https://github.com/pschatzmann/arduino-midi)
-- 10 notes need about 29% of one core of an ESP32-S3
+- 10 piano notes need about 29% of one core of an ESP32-S3
 - Examples from simple serial midi sketches up to a touch GUI with an on-screen
   piano keyboard ([TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign))
 - All example sketches also build and run unchanged on the desktop
@@ -32,10 +34,12 @@ sound which fits into the flash memory of an ESP32.
 | Clarinet | [699 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/Clarinet.mp3) | [250 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ClarinetSmall.mp3) | [150 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ClarinetOctave.mp3) |
 | Electric guitar | [701 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ElectricGuitar.mp3) | [251 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ElectricGuitarSmall.mp3) | [150 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ElectricGuitarOctave.mp3) |
 | Electric bass | [700 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ElectricBass.mp3) | [250 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ElectricBassSmall.mp3) | [150 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/ElectricBassOctave.mp3) |
+| Tonewheel organ | [synthesized: 0 KB](https://cdn.jsdelivr.net/gh/pschatzmann/TinyInstruments@main/docs/audio/TonewheelOrgan.mp3) | - | - |
 
 - **full**: all recordings and velocity layers, 32 kHz
 - **small**: one velocity layer, 22 kHz
 - **octave**: one recording per octave, one velocity layer, 22 kHz
+- **organ**: synthesized (drawbars, percussion, rotary speaker), no sample data
 
 Click on a size to listen to an example recording of this version (the same phrase for all
 versions of an instrument). Details and quality measurements:
@@ -44,7 +48,7 @@ versions of an instrument). Details and quality measurements:
 ## Documentation
 
 - [Getting Started](docs/getting-started.md) (with the list of [examples](docs/getting-started.md#examples))
-- [Instruments](docs/instruments.md): [Pianos](docs/piano.md), [Drum Kit](docs/drums.md), [Saxophone](docs/saxophone.md), [Electric Guitar](docs/guitar.md), [Electric Bass](docs/bass.md), [Clarinet](docs/clarinet.md)
+- [Instruments](docs/instruments.md): [Pianos](docs/piano.md), [Drum Kit](docs/drums.md), [Saxophone](docs/saxophone.md), [Electric Guitar](docs/guitar.md), [Electric Bass](docs/bass.md), [Clarinet](docs/clarinet.md), [Tonewheel Organ](docs/organ.md)
 - [Loading Sample Sets from Files / PSRAM](docs/loading.md)
 - [Performance](docs/performance.md)
 - [Desktop Player](docs/desktop.md)
@@ -84,7 +88,8 @@ To use the library on the desktop (tests, example sketches, desktop player), see
 The library is published under the [GNU General Public License v3.0](LICENSE).
 
 The sample data (`src/samples`, `data`) is in the public domain
-([CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)):
+([CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)); the tonewheel
+organ is synthesized and uses no samples:
 
 | Sample set | Source |
 |---|---|

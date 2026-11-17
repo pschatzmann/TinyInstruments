@@ -110,9 +110,10 @@ decoding from the beginning. The data is a single continuous stream per zone
 | `ImaAdpcmDecoder` | streaming decoder with seek to a saved state |
 | `SamplerVoice` | one sounding note: decode, interpolate, filter, envelopes, pan |
 | `PsolaSource` | PSOLA pitch shifting of a zone (used by the voice with `PitchShift::Psola`) |
+| `TonewheelOrgan`, `OrganSource` | synthesized organ: the registration of the instrument and the tone generator of a note (used by the voice instead of the sample data, see [Tonewheel Organ](organ.md)) |
 | `Instrument` | how a sample set is played: release, dampers, velocity curve, polyphony, choke, legato, vibrato, pitch shifting |
 | `InstrumentBank` | maps midi program numbers to instruments and effects |
-| `ChannelEffect`, `GuitarAmp` | effects which process the audio of their midi channels |
+| `ChannelEffect`, `GuitarAmp`, `RotarySpeaker` | effects which process the audio of their midi channels |
 | `SampleSynthesizer` | midi handling, voice allocation, mixing, output conversion |
 | `EventQueue` | passes midi events from the midi task to the audio task |
 | `SampleSynthesizerStream` | audio-tools adapter (`AudioStream`) |

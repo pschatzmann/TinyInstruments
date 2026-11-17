@@ -7,7 +7,7 @@ tone steps with 2 velocity layers, recorded without vibrato. It needs about
 Source: [VCSL](https://github.com/sgossner/VCSL) Tenor Saxophone (CC0).
 
 Smaller versions: `TenorSaxSmall()` (~250 KB, `samples/TenorSaxSmall.h`) and
-`data/TenorSaxOctave.bin` (~150 KB), see
+`TenorSaxOctave()` (~150 KB, `samples/TenorSaxOctave.h`), see
 [Versions and sizes](instruments.md#versions-and-sizes).
 
 ```cpp
