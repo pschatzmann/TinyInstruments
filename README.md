@@ -14,6 +14,10 @@ sound which fits into the flash memory of an ESP32.
 - Output via [arduino-audio-tools](https://github.com/pschatzmann/arduino-audio-tools),
   input via [arduino-midi](https://github.com/pschatzmann/arduino-midi)
 - 10 notes need about 29% of one core of an ESP32-S3
+- Examples from simple serial midi sketches up to a touch GUI with an on-screen
+  piano keyboard ([TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign))
+- All example sketches also build and run unchanged on the desktop
+  ([Arduino-Emulator](https://github.com/pschatzmann/Arduino-Emulator))
 - Desktop player for a USB midi keyboard, which can also forward the midi to a
   microcontroller (serial, TCP, UDP, BLE)
 
@@ -31,7 +35,7 @@ sound which fits into the flash memory of an ESP32.
 
 - **full**: all recordings and velocity layers, 32 kHz
 - **small**: one velocity layer, 22 kHz
-- **octave**: one recording per octave, one velocity layer, 22 kHz (only as data file)
+- **octave**: one recording per octave, one velocity layer, 22 kHz
 
 Click on a size to listen to an example recording of this version (the same phrase for all
 versions of an instrument). Details and quality measurements:
@@ -39,14 +43,14 @@ versions of an instrument). Details and quality measurements:
 
 ## Documentation
 
-- [Getting Started](docs/getting-started.md)
+- [Getting Started](docs/getting-started.md) (with the list of [examples](docs/getting-started.md#examples))
 - [Instruments](docs/instruments.md): [Pianos](docs/piano.md), [Drum Kit](docs/drums.md), [Saxophone](docs/saxophone.md), [Electric Guitar](docs/guitar.md), [Electric Bass](docs/bass.md), [Clarinet](docs/clarinet.md)
 - [Loading Sample Sets from Files / PSRAM](docs/loading.md)
 - [Performance](docs/performance.md)
 - [Desktop Player](docs/desktop.md)
 - [Design](docs/design.md)
 - [Creating your own Sample Sets](docs/sample-sets.md)
-- [Testing](docs/testing.md)
+- [Testing](docs/testing.md) and [running the examples on the desktop](docs/testing.md#running-the-examples-on-the-desktop)
 
 ## Installation in Arduino
 
@@ -64,8 +68,16 @@ git clone https://github.com/pschatzmann/arduino-audio-tools.git
 git clone https://github.com/pschatzmann/arduino-midi.git
 ```
 
+The [material-gui](examples/material-gui) example additionally needs:
+
+```
+git clone https://github.com/pschatzmann/TinyMaterialDesign.git
+git clone https://github.com/pschatzmann/TinyGPU.git
+git clone https://github.com/pschatzmann/arduino-audio-driver.git
+```
+
 I recommend to use git because you can easily update to the latest version just by executing the ```git pull``` command in the project folder.
-To use the library on the desktop (tests, desktop player), see [Testing](docs/testing.md) and [Desktop Player](docs/desktop.md).
+To use the library on the desktop (tests, example sketches, desktop player), see [Testing](docs/testing.md) and [Desktop Player](docs/desktop.md).
 
 ## License
 

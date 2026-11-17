@@ -62,7 +62,11 @@ python3 tools/sfz2header.py Sax.sfz --name MySax --mode sustain \
 
 With `--binary data/X.bin` the converter also writes the sample set as binary
 file which can be [loaded at runtime](loading.md). An existing header can be
-converted with `tools/header2bin.py src/samples/X.h data/X.bin`.
+converted with `tools/header2bin.py src/samples/X.h data/X.bin`, and a binary
+file into a header with `tools/bin2header.py data/X.bin src/samples/X.h
+--like src/samples/Full.h` (source and license are taken from the `--like`
+header). The octave headers (`src/samples/*Octave.h`) were created this way
+from the data files.
 
 ## Smaller sample sets
 

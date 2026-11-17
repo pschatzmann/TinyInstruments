@@ -10,6 +10,7 @@ endif()
 
 option(TI_BUILD_TESTS "Build the TinyInstruments unit tests" ${TI_IS_TOP_LEVEL})
 option(TI_BUILD_DESKTOP "Build the desktop player (downloads RtMidi and miniaudio)" OFF)
+option(TI_BUILD_EXAMPLES "Build the example sketches for the desktop (Arduino-Emulator)" OFF)
 
 if(NOT CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD 11)
@@ -27,6 +28,11 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
 
 if(TI_BUILD_DESKTOP)
     add_subdirectory(desktop)
+endif()
+
+if(TI_BUILD_EXAMPLES)
+    enable_testing()
+    add_subdirectory(examples)
 endif()
 
 if(TI_BUILD_TESTS)

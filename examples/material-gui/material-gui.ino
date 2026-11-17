@@ -12,6 +12,8 @@
  *   received from the midi inputs.
  * - "Setup" page: the midi inputs (the on-screen keyboard is always active),
  *   the output and the network status.
+ * - Menu (app bar): "Exit" stops the sound and switches the device off (deep
+ *   sleep: the reset button starts it again).
  *
  * Midi inputs (raw midi bytes, as sent by the desktop player
  * `tinyinstruments-player --send serial:/dev/ttyACM0|tcp:IP|udp:IP`):
@@ -33,8 +35,9 @@
  * - ESP32-S3 2.8" display board (ILI9341, FT6336 touch, ES8311 codec), e.g.
  *   the Hosyond ESP32-S3 2.8" display; for another board change `board` and
  *   `out`.
- * - Partition scheme with at least 2 MB for the application, e.g. "16M Flash
- *   (3MB APP/9.9MB FATFS)" or "Huge APP". PSRAM is recommended.
+ * - Partition scheme with a 3 MB application partition (the sketch needs
+ *   about 2.9 MB), e.g. "16M Flash (3MB APP/9.9MB FATFS)" or "Huge APP".
+ *   PSRAM is recommended.
  * - Libraries: TinyMaterialDesign, TinyGPU, arduino-audio-tools,
  *   arduino-audio-driver, arduino-midi
  */
@@ -229,6 +232,12 @@ MidiParser serial_parser(&router), tcp_parser(&router), udp_parser(&router);
 
 // ---------------------------------------------------------------- widgets
 AppBar<RGB565> app_bar(Bounds(0, 0, kWidth, 36), "TinyInstruments");
+IconButton<RGB565> menu_button;
+Menu<RGB565> menu(Bounds(kWidth - 164, 36, 160, 44));
+ListItem<RGB565> exit_item;
+Dialog<RGB565> exit_dialog(Bounds(16, (kHeight - 150) / 2, kWidth - 32, 150), "Exit?",
+                           "The sound is stopped and the device is switched off.");
+Button<RGB565> exit_cancel, exit_confirm;
 TabBar<RGB565> tabs(Bounds(0, 36, kWidth, 32));
 
 // play page
@@ -360,8 +369,53 @@ void setOutput(Port port) {
   selectInstrument(instrument);
 }
 
+/// Power icon of the "Exit" menu item
+template <typename RGB_T>
+void drawPowerIcon(tinygpu::ISurface<RGB_T>& target, const Bounds& r, RGB_T color, uint8_t thickness = 2) {
+  const int32_t radius = r.w * 3 / 8;
+  const int32_t cx = r.centerX(), cy = r.centerY() + 1;
+  target.drawArc(toPx(cx), toPx(cy), toPx(radius), 300.0f, 600.0f, color, thickness);
+  drawLineThick(target, cx, cy - radius - 1, cx, cy - 1, color, thickness);
+}
+
+/// "Exit" in the menu: stops the sound and switches the device off (deep
+/// sleep without wake-up source: only the reset button starts it again)
+void shutdown() {
+  screen.dismissDialog();
+  piano.releaseAll();
+  synth.allNotesOff();
+  audio_task.end();
+  out.end();
+  tcp_out.stop();
+  tcp_in.stop();
+  if (board.backlightPin() >= 0) {
+    const gpio_num_t backlight = (gpio_num_t)board.backlightPin();
+    digitalWrite(backlight, LOW);
+    gpio_hold_en(backlight);  // keeps the backlight off during the deep sleep
+    gpio_deep_sleep_hold_en();
+  }
+  Serial.flush();
+  esp_deep_sleep_start();
+}
+
 void setupWidgets() {
+  menu_button = IconButton<RGB565>(app_bar.trailingRect(), drawMenu<RGB565>);
+  menu_button.onClick = []() { screen.presentDialog(menu); };
+  app_bar.trailing = &menu_button;
   screen.addFixedWidget(app_bar);
+  exit_item = ListItem<RGB565>(menu.itemRect(0, 44), "Exit", drawPowerIcon<RGB565>);
+  exit_item.onClick = []() {
+    screen.dismissDialog();
+    screen.presentDialog(exit_dialog);
+  };
+  menu.addItem(exit_item);
+  menu.onOutsideTap = []() { screen.dismissDialog(); };
+  exit_cancel = Button<RGB565>(exit_dialog.actionRect(0, 2), "Cancel", ButtonVariant::kText);
+  exit_cancel.onClick = []() { screen.dismissDialog(); };
+  exit_confirm = Button<RGB565>(exit_dialog.actionRect(1, 2), "Exit");
+  exit_confirm.onClick = []() { shutdown(); };
+  exit_dialog.addAction(exit_cancel);
+  exit_dialog.addAction(exit_confirm);
   tabs.addTab("Play");
   tabs.addTab("Setup");
   tabs.onChange = [](int index) { showPage(index); };
@@ -492,6 +546,7 @@ void setupAudio() {
 void setup() {
   Serial.begin(115200);
   AudioToolsLogger.begin(Serial, AudioToolsLogLevel::Warning);
+  if (board.backlightPin() >= 0) gpio_hold_dis((gpio_num_t)board.backlightPin());  // see shutdown()
   board.begin();
   display.begin();
   surface.begin();
@@ -503,7 +558,8 @@ void setup() {
 void loop() {
   touch.poll(*board.touch());
   gestures.update(touch);
-  piano.setTouches(touch.points, touch.count);
+  // no keys while the menu or a dialog is open
+  piano.setTouches(touch.points, screen.hasDialog() ? 0 : touch.count);
   readInputs();
   updateNetwork();
   screen.update(millis());

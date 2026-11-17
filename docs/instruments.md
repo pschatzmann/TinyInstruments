@@ -23,10 +23,10 @@ Each instrument is available in up to three versions:
 - **small** (~250 KB): one velocity layer, 22 kHz; soft notes are created from
   the loud recording with the velocity lowpass
 - **octave** (~150 KB): one recording per octave, one velocity layer, 22 kHz;
-  the other notes are transposed. Only as data file (not for the drum kit)
+  the other notes are transposed (not for the drum kit)
 
-The full and small versions can be compiled into the program (header) or
-[loaded from a file](loading.md); the octave versions only from a file.
+All versions can be compiled into the program (header) or
+[loaded from a file](loading.md).
 
 ```cpp
 #include "samples/GrandPianoSmall.h"
@@ -37,24 +37,24 @@ Instrument piano = PianoInstrument(GrandPianoSmall());
 |---|---|---|---|---|---|---|---|---|---|
 | Upright piano | full | `data/UprightPianoKW.bin` | `UprightPianoKW.h` | 702 KB | 38 | 2 | 32.00 kHz | 2.9 dB | - |
 | Upright piano | small | `data/UprightPianoKWSmall.bin` | `UprightPianoKWSmall.h` | 251 KB | 36 | 1 | 22.05 kHz | 3.8 dB | - |
-| Upright piano | octave | `data/UprightPianoKWOctave.bin` | - | 150 KB | 8 | 1 | 22.05 kHz | 2.2 dB | 6.0 dB |
+| Upright piano | octave | `data/UprightPianoKWOctave.bin` | `UprightPianoKWOctave.h` | 150 KB | 8 | 1 | 22.05 kHz | 2.2 dB | 6.0 dB |
 | Grand piano | full | `data/GrandPiano.bin` | `GrandPiano.h` | 702 KB | 22 | 3 | 32.00 kHz | 3.5 dB | - |
 | Grand piano | small | `data/GrandPianoSmall.bin` | `GrandPianoSmall.h` | 251 KB | 22 | 1 | 22.05 kHz | 3.2 dB | - |
-| Grand piano | octave | `data/GrandPianoOctave.bin` | - | 150 KB | 7 | 1 | 22.05 kHz | 2.6 dB | 6.9 dB |
+| Grand piano | octave | `data/GrandPianoOctave.bin` | `GrandPianoOctave.h` | 150 KB | 7 | 1 | 22.05 kHz | 2.6 dB | 6.9 dB |
 | Drum kit | full | `data/DrumKit.bin` | `DrumKit.h` | 702 KB | 43 | 2 | 32.00 kHz | 3.4 dB | - |
 | Drum kit | small | `data/DrumKitSmall.bin` | `DrumKitSmall.h` | 251 KB | 43 | 1 | 22.05 kHz | 3.8 dB | - |
 | Tenor saxophone | full | `data/TenorSax.bin` | `TenorSax.h` | 701 KB | 23 | 2 | 32.00 kHz | 2.7 dB | - |
 | Tenor saxophone | small | `data/TenorSaxSmall.bin` | `TenorSaxSmall.h` | 250 KB | 23 | 1 | 22.05 kHz | 4.4 dB | - |
-| Tenor saxophone | octave | `data/TenorSaxOctave.bin` | - | 148 KB | 4 | 1 | 22.05 kHz | 3.7 dB | 8.6 dB |
+| Tenor saxophone | octave | `data/TenorSaxOctave.bin` | `TenorSaxOctave.h` | 148 KB | 4 | 1 | 22.05 kHz | 3.7 dB | 8.6 dB |
 | Clarinet | full | `data/Clarinet.bin` | `Clarinet.h` | 699 KB | 11 | 3 | 32.00 kHz | 3.2 dB | - |
 | Clarinet | small | `data/ClarinetSmall.bin` | `ClarinetSmall.h` | 250 KB | 11 | 1 | 22.05 kHz | 4.8 dB | - |
-| Clarinet | octave | `data/ClarinetOctave.bin` | - | 150 KB | 4 | 1 | 22.05 kHz | 4.0 dB | 10.7 dB |
+| Clarinet | octave | `data/ClarinetOctave.bin` | `ClarinetOctave.h` | 150 KB | 4 | 1 | 22.05 kHz | 4.0 dB | 10.7 dB |
 | Electric guitar | full | `data/ElectricGuitar.bin` | `ElectricGuitar.h` | 701 KB | 19 | 2 | 32.00 kHz | 1.0 dB | - |
 | Electric guitar | small | `data/ElectricGuitarSmall.bin` | `ElectricGuitarSmall.h` | 251 KB | 19 | 1 | 22.05 kHz | 3.0 dB | - |
-| Electric guitar | octave | `data/ElectricGuitarOctave.bin` | - | 150 KB | 4 | 1 | 22.05 kHz | 2.3 dB | 6.8 dB |
+| Electric guitar | octave | `data/ElectricGuitarOctave.bin` | `ElectricGuitarOctave.h` | 150 KB | 4 | 1 | 22.05 kHz | 2.3 dB | 6.8 dB |
 | Electric bass | full | `data/ElectricBass.bin` | `ElectricBass.h` | 700 KB | 14 | 2 | 32.00 kHz | 0.4 dB | - |
 | Electric bass | small | `data/ElectricBassSmall.bin` | `ElectricBassSmall.h` | 250 KB | 14 | 1 | 22.05 kHz | 0.6 dB | - |
-| Electric bass | octave | `data/ElectricBassOctave.bin` | - | 150 KB | 4 | 1 | 22.05 kHz | 0.6 dB | 8.8 dB |
+| Electric bass | octave | `data/ElectricBassOctave.bin` | `ElectricBassOctave.h` | 150 KB | 4 | 1 | 22.05 kHz | 0.6 dB | 8.8 dB |
 
 ¹ Spectral difference of the recorded notes: the playback (loop, decay,
 ADPCM) is compared with the original recording, as RMS difference of the third

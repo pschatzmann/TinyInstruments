@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-#if defined(ARDUINO) && __has_include(<pgmspace.h>)
+#if defined(ARDUINO) && !defined(PROGMEM) && __has_include(<pgmspace.h>)
 #  include <pgmspace.h>
 #endif
 

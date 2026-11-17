@@ -1,7 +1,11 @@
 # Getting Started
 
 Install [arduino-audio-tools](https://github.com/pschatzmann/arduino-audio-tools)
-and [arduino-midi](https://github.com/pschatzmann/arduino-midi).
+and [arduino-midi](https://github.com/pschatzmann/arduino-midi). The
+[material-gui](../examples/material-gui) example also needs
+[TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign),
+[TinyGPU](https://github.com/pschatzmann/TinyGPU) and
+[arduino-audio-driver](https://github.com/pschatzmann/arduino-audio-driver).
 
 A sketch consists of:
 
@@ -58,7 +62,9 @@ To use another instrument, include its header and use the matching preset:
 | Electric bass | `samples/ElectricBass.h` | `BassInstrument(ElectricBass())` + `GuitarAmp(GuitarAmp::Bass)` | any |
 
 Each instrument also has a small version (~250 KB instead of ~700 KB), e.g.
-`samples/GrandPianoSmall.h` with `PianoInstrument(GrandPianoSmall())`. See
+`samples/GrandPianoSmall.h` with `PianoInstrument(GrandPianoSmall())`, and
+(except the drum kit) an octave version (~150 KB), e.g.
+`samples/GrandPianoOctave.h` with `PianoInstrument(GrandPianoOctave())`. See
 [Instruments](instruments.md) for the details and
 [Versions and sizes](instruments.md#versions-and-sizes) to compare them.
 Instead of compiling the samples into the program, they can also be
@@ -68,6 +74,10 @@ Instead of compiling the samples into the program, they can also be
 
 The instruments can be played on a computer with a USB midi keyboard before
 you flash a board: see the [Desktop Player](desktop.md).
+
+All the examples below also build and run unchanged on the desktop (sound
+card, midi on stdin, the GUI in a window): see
+[running the examples on the desktop](testing.md#running-the-examples-on-the-desktop).
 
 ## Examples
 
@@ -84,5 +94,5 @@ you flash a board: see the [Desktop Player](desktop.md).
 | [piano-drums-serial-midi](../examples/piano-drums-serial-midi) | grand piano and drums (channel 10) | Huge APP |
 | [file-psram-serial-midi](../examples/file-psram-serial-midi) | instrument loaded from LittleFS into PSRAM | with file system |
 | [all-instruments](../examples/all-instruments) | all instruments loaded from LittleFS into PSRAM, selected with program changes (General MIDI) | own partitions.csv (16 MB flash) |
-| [material-gui](../examples/material-gui) | touch GUI ([TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign)) for the ESP32-S3 2.8" display board: on-screen piano keyboard, midi input via serial/TCP/UDP, output via I2S or forwarded midi (serial/TCP/UDP) | 16 MB flash, 3 MB APP |
+| [material-gui](../examples/material-gui) | touch GUI ([TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign)) for the ESP32-S3 2.8" display board: on-screen piano keyboard, midi input via serial/TCP/UDP, output via I2S or forwarded midi (serial/TCP/UDP) | 3 MB APP (e.g. Huge APP) |
 | [benchmark](../examples/benchmark) | measures the CPU load (piano, guitar with amp) | Huge APP |

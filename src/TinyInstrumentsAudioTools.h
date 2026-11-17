@@ -6,6 +6,14 @@
 #include "AudioTools.h"
 #include "TinyInstruments.h"
 
+#if defined(IS_DESKTOP) && !defined(USE_I2S)
+// Desktop (Arduino-Emulator): the I2S output of the sketches is the sound card
+#  include "AudioTools/AudioLibs/MiniAudioStream.h"
+namespace audio_tools {
+using I2SStream = MiniAudioStream;
+}
+#endif
+
 namespace tinyinstruments {
 
 /**
