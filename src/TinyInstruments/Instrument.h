@@ -49,6 +49,9 @@ struct Instrument {
   float stereoWidth = 0.5f;
   /// fade out time (seconds) of a sounding note which is played again
   float restrikeTime = 0.03f;
+  /// transposition in semitones, e.g. -24: the instrument plays two octaves
+  /// lower (added to the transposition of the channel)
+  int8_t transpose = 0;
   /// gain of the instrument
   float volume = 1.0f;
 

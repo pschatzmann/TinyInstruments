@@ -45,7 +45,7 @@ a matching instrument are played by the most similar one:
 | 40-55 strings, choirs | tonewheel organ (sustained sound) |
 | 56-63 brass | tenor saxophone |
 | 64-67 saxophones | tenor saxophone |
-| 68-79 reeds, pipes | clarinet |
+| 68-79 reeds, pipes | clarinet (+6 dB; piccolo 1 octave lower, whistle 2 octaves lower) |
 | 80-103 synthesizer leads, pads | tonewheel organ |
 | 104-111 ethnic instruments | electric guitar, clean amp |
 | 112-127 sound effects | silent |
@@ -53,8 +53,15 @@ a matching instrument are played by the most similar one:
 
 The sound effects are silent (an `Instrument` without sample set): e.g. a
 "reverse cymbal" would otherwise be played as piano notes. The saxophone is
-monophonic: a brass section plays only its top voice. Change the mapping in
-`setupInstruments()` of the sketch.
+monophonic: a brass section plays only its top voice.
+
+The clarinet plays the flute parts (e.g. the theme of the example song), so
+it is 6 dB louder than its preset (`CLARINET_VOLUME`). The piccolo and the
+whistle sound higher than the range of the clarinet: they are played by
+copies of the clarinet which are transposed one or two octaves down
+(`Instrument::transpose`, see [Transposition](instruments.md#transposition)).
+
+Change the mapping in `setupInstruments()` of the sketch.
 
 The instruments share `TI_MAX_VOICES` (16 in the example) voices. A song with
 many instruments needs more CPU than a single instrument: see

@@ -126,6 +126,7 @@ synth.setInstrument(-1, piano);
 | `vibratoRate`, `vibratoDepth` | vibrato speed (Hz) and depth (cents) with the modulation wheel |
 | `autoVibratoDepth`, `autoVibratoDelay`, `autoVibratoRise` | vibrato which fades in on long notes |
 | `pitchShift` | `PitchShift::Resample` or `PitchShift::Psola`: how notes between the recorded notes are created (see below) |
+| `transpose` | transposition in semitones, e.g. -24: two octaves lower (added to the transposition of the channel) |
 | `volume` | gain of the instrument |
 
 ## Pitch shifting
@@ -186,6 +187,28 @@ Program changes are queued like the other midi events. Unknown programs are
 ignored. If the new program uses another effect, the sounding notes of the
 channel fade out within 50 ms. The [all-instruments](../examples/all-instruments)
 example maps all instruments to the General MIDI programs.
+
+## Transposition
+
+Each midi channel and each instrument can be transposed, e.g. when a part is
+played by an instrument with a lower range. The sounding note is the received
+key + the transposition of the channel + the transposition of the instrument:
+
+```cpp
+synth.setTranspose(8, -24);  // midi channel 9: two octaves lower
+synth.setTranspose(-1, 12);  // all channels: one octave higher
+int semitones = synth.transpose(8);
+
+Instrument whistle = clarinet;  // the clarinet plays the whistle part ...
+whistle.transpose = -24;        // ... two octaves lower
+bank.add(78, 78, whistle);      // selected with the program change
+```
+
+The received keys are kept for the note off: a note which is held while the
+transposition changes keeps its pitch and is still released. The drum channel
+should not be transposed (the keys select the sounds). The
+[midi-file-player](../examples/midi-file-player) example uses transposed
+instruments for the piccolo and the whistle (see [Playing MIDI Files](midi-files.md)).
 
 ## Effects
 

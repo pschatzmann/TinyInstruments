@@ -74,6 +74,20 @@ class SampleSynthesizer {
   /// Pitch bend range in semitones (default 2)
   void setPitchBendRange(float semitones) { bend_range = semitones; }
 
+  /// Transposition of a midi channel (0..15) or of all channels (-1) in
+  /// semitones, e.g. -24: the notes of the channel are played two octaves
+  /// lower. Notes which are already sounding keep their pitch (and are
+  /// released correctly).
+  void setTranspose(int channel, int semitones) {
+    int8_t value = (int8_t)(semitones < -127 ? -127 : (semitones > 127 ? 127 : semitones));
+    for (int ch = 0; ch < TI_MIDI_CHANNELS; ch++) {
+      if (channel < 0 || channel == ch) channels[ch].transpose = value;
+    }
+  }
+
+  /// Transposition of a midi channel in semitones
+  int transpose(uint8_t channel) const { return channels[channel & 0x0F].transpose; }
+
   // ---- midi input: thread safe, events are queued ----
 
   bool noteOn(uint8_t channel, uint8_t note, uint8_t velocity) {
@@ -186,6 +200,7 @@ class SampleSynthesizer {
     ChannelEffect* effect = nullptr;
     float modulation = 0.0f;  // CC1: 0..1
     float breath = 1.0f;      // CC2: 0..1
+    volatile int8_t transpose = 0;  // semitones (setTranspose())
     // held keys of monophonic instruments (last = sounding)
     uint8_t held_notes[16];
     uint8_t held_velocity[16];
@@ -357,13 +372,14 @@ class SampleSynthesizer {
   }
 
   /// Starts a voice; legato: without attack (from the loop start) with a fade in
-  void startNote(uint8_t ch, uint8_t note, uint8_t velocity, bool legato) {
+  void startNote(uint8_t ch, uint8_t key, uint8_t velocity, bool legato) {
     ChannelState& cs = channels[ch];
     const Instrument* inst = cs.instrument;
     if (inst->organ != nullptr) {
-      startOrganNote(ch, note, velocity);
+      startOrganNote(ch, key, velocity);
       return;
     }
+    uint8_t note = soundingNote(cs, key);
     const SampleZone* zone = inst->samples->findZone(note, velocity, inst->exactKeys);
     if (zone == nullptr) return;
 
@@ -381,7 +397,7 @@ class SampleSynthesizer {
     // a note which is played again: fade out the old one
     for (int j = 0; j < VOICE_COUNT; j++) {
       SamplerVoice& v = voices[j];
-      if (v.isActive() && !v.fading && v.channel == ch && v.note == note) {
+      if (v.isActive() && !v.fading && v.channel == ch && v.key == key) {
         v.release(inst->restrikeTime * sample_rate);
         v.key_down = false;
         v.sustained = false;
@@ -433,6 +449,7 @@ class SampleSynthesizer {
                  sample_rate);
     v.channel = ch;
     v.note = note;
+    v.key = key;
     v.velocity = velocity;
     v.key_down = true;
     v.sustained = false;
@@ -441,16 +458,17 @@ class SampleSynthesizer {
   }
 
   /// Starts a note of a tonewheel organ
-  void startOrganNote(uint8_t ch, uint8_t note, uint8_t velocity) {
+  void startOrganNote(uint8_t ch, uint8_t key, uint8_t velocity) {
     ChannelState& cs = channels[ch];
     const Instrument* inst = cs.instrument;
+    uint8_t note = soundingNote(cs, key);
     // single triggered percussion: only if no other key of the channel is held
     bool percussion = true;
     for (int j = 0; j < VOICE_COUNT; j++) {
       SamplerVoice& v = voices[j];
       if (v.isActive() && v.channel == ch && !v.fading && (v.key_down || v.sustained)) percussion = false;
       // a note which is played again: fade out the old one
-      if (v.isActive() && !v.fading && v.channel == ch && v.note == note) {
+      if (v.isActive() && !v.fading && v.channel == ch && v.key == key) {
         v.release(inst->restrikeTime * sample_rate);
         v.key_down = false;
         v.sustained = false;
@@ -470,11 +488,19 @@ class SampleSynthesizer {
     v.setVibrato(inst->vibratoRate, inst->vibratoDepth * cs.modulation, 0.0f, 0.0f, 1.0f, sample_rate);
     v.channel = ch;
     v.note = note;
+    v.key = key;
     v.velocity = velocity;
     v.key_down = true;
     v.sustained = false;
     v.fading = false;
     v.age = ++note_counter;
+  }
+
+  /// Note which sounds for a received key: with the transposition of the
+  /// channel and of the instrument
+  static uint8_t soundingNote(const ChannelState& cs, uint8_t key) {
+    int note = key + cs.transpose + (cs.instrument != nullptr ? cs.instrument->transpose : 0);
+    return (uint8_t)(note < 0 ? 0 : (note > 127 ? 127 : note));
   }
 
   void doNoteOff(uint8_t ch, uint8_t note) {
@@ -492,7 +518,7 @@ class SampleSynthesizer {
     }
     for (int j = 0; j < VOICE_COUNT; j++) {
       SamplerVoice& v = voices[j];
-      if (!v.isActive() || !v.key_down || v.channel != ch || v.note != note) continue;
+      if (!v.isActive() || !v.key_down || v.channel != ch || v.key != note) continue;
       v.key_down = false;
       if (cs.sustain) {
         v.sustained = true;

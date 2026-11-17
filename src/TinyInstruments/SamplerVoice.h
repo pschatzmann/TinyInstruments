@@ -203,7 +203,8 @@ class SamplerVoice {
 
   // management data used by the SampleSynthesizer
   uint8_t channel = 0;
-  uint8_t note = 0;
+  uint8_t note = 0;  ///< sounding note (with the transposition of the channel)
+  uint8_t key = 0;   ///< received midi key: note off and re-strike match this
   uint8_t velocity = 0;
   bool key_down = false;   ///< the key is still pressed
   bool sustained = false;  ///< note off received while the sustain pedal was down

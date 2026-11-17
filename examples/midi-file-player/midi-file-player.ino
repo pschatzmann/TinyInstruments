@@ -21,7 +21,8 @@
  * | 40-55 strings, choirs           | tonewheel organ (sustained sound)   |
  * | 56-63 brass                     | tenor saxophone                     |
  * | 64-67 saxophones                | tenor saxophone                     |
- * | 68-79 reeds, pipes              | clarinet                            |
+ * | 68-79 reeds, pipes              | clarinet (piccolo: 1 octave lower,  |
+ * |                                 | whistle: 2 octaves lower)           |
  * | 80-103 synthesizer leads, pads  | tonewheel organ                     |
  * | 104-111 ethnic instruments      | electric guitar, clean amp          |
  * | 112-127 sound effects           | silent                              |
@@ -59,6 +60,10 @@ Instrument upright_bass = UprightBassInstrument(UprightBassSmall());
 Instrument bass = BassInstrument(ElectricBassSmall());
 Instrument sax = SaxophoneInstrument(TenorSaxSmall());
 Instrument clarinet = ClarinetInstrument(ClarinetSmall());
+const float CLARINET_VOLUME = 2.0f;  // +6 dB: it plays melodies (e.g. flute parts)
+// the clarinet also plays the piccolo and the whistle, which sound higher than
+// its range: transposed down (see setupInstruments())
+Instrument piccolo, whistle;
 Instrument drums = DrumInstrument(DrumKitSmall());
 Instrument silent;  // no sample set: the notes are ignored
 TremoloEffect tremolo(5.5f, 0.3f);
@@ -85,6 +90,11 @@ double song_ms = 0;  // exact: rounding the time of each event would add up
 int note_count = 0;
 
 void setupInstruments() {
+  clarinet.volume = CLARINET_VOLUME;
+  piccolo = clarinet;
+  piccolo.transpose = -12;  // one octave lower
+  whistle = clarinet;
+  whistle.transpose = -24;  // two octaves lower
   bank.add(0, 15, piano);
   bank.add(4, 5, epiano, &tremolo);
   bank.add(16, 23, organ, &leslie);
@@ -94,6 +104,8 @@ void setupInstruments() {
   bank.add(40, 55, organ, &leslie);
   bank.add(56, 67, sax);
   bank.add(68, 79, clarinet);
+  bank.add(72, 72, piccolo);
+  bank.add(78, 78, whistle);
   bank.add(80, 103, organ, &leslie);
   bank.add(104, 111, guitar, &clean_amp);
   bank.add(112, 127, silent);
@@ -116,7 +128,8 @@ void feedParser() {
 void play(const midi::midi_midi_event& e) {
   switch (e.status) {
     case midi::MIDI_STATUS_NOTE_ON:
-      synth.noteOn(e.channel, e.param1, e.param2);  // velocity 0 = note off
+      // velocity 0 = note off
+      synth.noteOn(e.channel, e.param1, e.param2);
       if (e.param2 > 0) note_count++;
       break;
     case midi::MIDI_STATUS_NOTE_OFF:

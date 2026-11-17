@@ -39,6 +39,83 @@ static void testTransposition() {
   CHECK_NEAR(estimateFrequency(out, 48000, 300, 1200), 400.0 * pow(2.0, 7 / 12.0), 2.0);
 }
 
+// setTranspose(): notes of a channel are played lower / higher, note off
+// still matches when the transposition changes while the note is held
+static void testChannelTranspose() {
+  Instrument inst(sineSet);
+  SampleSynthesizer synth;
+  synth.setInstrument(-1, inst);
+  synth.begin(44100);
+  synth.setTranspose(2, -12);
+  CHECK(synth.transpose(2) == -12 && synth.transpose(0) == 0);
+  synth.noteOn(2, 67, 127);  // root 67 = 400 Hz: one octave lower
+  auto out = renderLeft(synth, 8192);
+  CHECK_NEAR(estimateFrequency(out, 44100, 120, 500), 200.0, 1.0);
+  // the transposition changes while the note is held: note off still works
+  synth.setTranspose(2, 5);
+  synth.noteOff(2, 67);
+  renderLeft(synth, 44100);
+  CHECK(synth.activeVoices() == 0);
+  // other channels are not transposed
+  synth.noteOn(0, 67, 127);
+  out = renderLeft(synth, 8192);
+  CHECK_NEAR(estimateFrequency(out, 44100, 200, 1000), 400.0, 1.0);
+  synth.noteOff(0, 67);
+  renderLeft(synth, 44100);
+  // all channels: re-strike of the same key replaces the note
+  synth.setTranspose(-1, 12);
+  synth.noteOn(1, 60, 127);
+  synth.noteOn(1, 60, 127);
+  renderLeft(synth, 4410);
+  CHECK(synth.activeNotes() == 1);
+  synth.noteOff(1, 60);
+  renderLeft(synth, 44100);
+  CHECK(synth.activeVoices() == 0);
+  // monophonic instrument (legato) and organ: note off with the received key
+  Instrument mono(sineSet);
+  mono.monophonic = true;
+  mono.legato = true;
+  mono.maxNotes = 1;
+  TonewheelOrgan tonewheels("008000000");
+  Instrument organ = OrganInstrument(tonewheels);
+  synth.setTranspose(-1, -24);
+  synth.setInstrument(3, mono);
+  synth.setInstrument(4, organ);
+  synth.noteOn(3, 79, 127);
+  synth.noteOn(3, 81, 127);
+  synth.noteOn(4, 93, 127);  // A6 two octaves lower: A4 = 440 Hz
+  auto organ_out = renderLeft(synth, 8192);
+  synth.noteOff(3, 81);
+  synth.noteOff(3, 79);
+  synth.noteOff(4, 93);
+  renderLeft(synth, 44100);
+  CHECK(synth.activeVoices() == 0);
+  SampleSynthesizer organ_synth;
+  organ_synth.setInstrument(-1, organ);
+  organ_synth.begin(44100);
+  organ_synth.setTranspose(0, -24);
+  organ_synth.noteOn(0, 93, 127);
+  out = renderLeft(organ_synth, 8192);
+  CHECK_NEAR(estimateFrequency(out, 44100, 350, 550), 440.0, 1.5);
+
+  // transposition of the instrument: added to the one of the channel
+  Instrument low(sineSet);
+  low.transpose = -12;
+  SampleSynthesizer synth2;
+  synth2.setInstrument(-1, low);
+  synth2.begin(44100);
+  synth2.noteOn(0, 67, 127);  // 400 Hz one octave lower
+  out = renderLeft(synth2, 8192);
+  CHECK_NEAR(estimateFrequency(out, 44100, 120, 500), 200.0, 1.0);
+  synth2.noteOff(0, 67);
+  renderLeft(synth2, 44100);
+  CHECK(synth2.activeVoices() == 0);
+  synth2.setTranspose(0, 12);  // channel + instrument = 0
+  synth2.noteOn(0, 67, 127);
+  out = renderLeft(synth2, 8192);
+  CHECK_NEAR(estimateFrequency(out, 44100, 200, 1000), 400.0, 1.0);
+}
+
 static void testVelocity() {
   Instrument inst(sineSet);
   SampleSynthesizer synth;
@@ -402,5 +479,6 @@ int main() {
   testInstrumentPolyphony();
   testInstrumentBank();
   testProgramChange();
+  testChannelTranspose();
   return testResult("test_synthesizer");
 }
