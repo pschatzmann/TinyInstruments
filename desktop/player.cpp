@@ -1,6 +1,6 @@
 /**
  * TinyInstruments desktop player: plays the instruments with a (USB) midi
- * keyboard on the sound card of the computer. The midi messages are parsed with
+ * keyboard or a midi file on the sound card of the computer. The midi messages are parsed with
  * arduino-midi and passed to the SampleSynthesizer with the same
  * SampleSynthesizerMidiAction which is used on the microcontrollers.
  *
@@ -12,6 +12,11 @@
  *   tinyinstruments-player --instrument epiano --tremolo 0.5
  *   tinyinstruments-player --virtual --wav out.wav --seconds 10
  *   tinyinstruments-player --send tcp:192.168.1.40 --no-audio
+ *   tinyinstruments-player --midi-file song.mid --loop
+ *
+ * Midi files (--midi-file) are parsed with arduino-midi-fileparser
+ * (MidiFileSong.h: the tracks are merged), the General MIDI program changes
+ * select the instruments (GeneralMidiBank).
  *
  * The received midi messages can also be forwarded to microcontrollers
  * (--send): serial, tcp and udp (arduino-midi MidiStreamIn, MidiIpServer,
@@ -31,6 +36,7 @@
 #include <thread>
 #include <vector>
 
+#include "MidiFileSong.h"
 #include "MidiForwarders.h"
 #include "MidiParser.h"
 #include "RtMidi.h"
@@ -62,6 +68,10 @@ struct Options {
   std::string leslie = "slow";         // organ rotary speaker: slow, fast, off
   float tremolo = -1;                  // electric piano tremolo depth (< 0: default)
   std::vector<std::string> send;  // forward targets
+  std::string midi_file;          // midi file to play
+  bool loop = false;              // repeat the midi file
+  bool gm = false;                // General MIDI instruments (program changes)
+  bool instrument_selected = false;  // --instrument or --file was given
   bool audio = true;
   int channel = 0;  // 1..16, 0 = all
   bool drums = false;
@@ -76,11 +86,16 @@ struct Options {
 
 static void usage() {
   printf(
-      "TinyInstruments desktop player: plays the instruments with a midi keyboard\n\n"
+      "TinyInstruments desktop player: plays the instruments with a midi keyboard or a midi file\n\n"
       "Usage: tinyinstruments-player [options]\n"
       "  --list                 list the midi input and output ports\n"
       "  --port N|NAME          midi input port number or part of the name (default: all)\n"
       "  --virtual              open a virtual midi input port 'TinyInstruments'\n"
+      "  --midi-file PATH       play a midi file (.mid); the program exits at the end\n"
+      "  --loop                 play the midi file again and again (pause of 2 s)\n"
+      "  --gm                   General MIDI: the program changes select the instruments\n"
+      "                         (default for --midi-file, unless --instrument or --file\n"
+      "                         is given)\n"
       "  --instrument NAME      upright | grand | epiano | drums | sax | clarinet | guitar |\n"
       "                         bass | upright-bass | organ (synthesized tonewheel organ)\n"
       "  --tremolo DEPTH        tremolo 0..1 (default: 0.3 for the electric piano, otherwise\n"
@@ -126,11 +141,20 @@ static bool parseArgs(int argc, char** argv, Options& opt) {
     if (a == "--list") opt.list = true;
     else if (a == "--port") opt.port = next();
     else if (a == "--virtual") opt.virtual_port = true;
-    else if (a == "--instrument") opt.instrument = next();
+    else if (a == "--instrument") {
+      opt.instrument = next();
+      opt.instrument_selected = true;
+    }
+    else if (a == "--midi-file") opt.midi_file = next();
+    else if (a == "--loop") opt.loop = true;
+    else if (a == "--gm") opt.gm = true;
     else if (a == "--drawbars") opt.drawbars = next();
     else if (a == "--leslie") opt.leslie = next();
     else if (a == "--tremolo") opt.tremolo = atof(next().c_str());
-    else if (a == "--file") opt.file = next();
+    else if (a == "--file") {
+      opt.file = next();
+      opt.instrument_selected = true;
+    }
     else if (a == "--type") opt.type = next();
     else if (a == "--amp") opt.amp = next();
     else if (a == "--channel") opt.channel = atoi(next().c_str());
@@ -148,12 +172,15 @@ static bool parseArgs(int argc, char** argv, Options& opt) {
       return false;
     }
   }
+  // a midi file: General MIDI instruments, unless an instrument was selected
+  if (!opt.midi_file.empty() && !opt.instrument_selected) opt.gm = true;
   return true;
 }
 
-/// Passes the raw midi bytes of all input ports to the parser (single
-/// producer for the lock free queue of the synthesizer: RtMidi uses one
-/// thread per port, so the messages are serialized with a mutex)
+/// Passes the raw midi bytes of all input ports and of the midi file to the
+/// parser and to the forwarders (single producer for the lock free queue of
+/// the synthesizer: RtMidi uses one thread per port and the midi file has its
+/// own thread, so the messages are serialized with a mutex)
 struct MidiInput {
   midi::MidiParser parser;
   std::mutex mutex;
@@ -163,21 +190,36 @@ struct MidiInput {
   std::vector<std::unique_ptr<RtMidiOut>> outputs;
 
   static void callback(double, std::vector<unsigned char>* msg, void* user) {
-    MidiInput* self = (MidiInput*)user;
     if (msg->empty()) return;
-    std::lock_guard<std::mutex> lock(self->mutex);
-    if (self->verbose) {
-      for (unsigned char b : *msg) printf("%02X ", b);
+    ((MidiInput*)user)->process(msg->data(), msg->size());
+  }
+
+  /// Plays and forwards a complete midi message
+  void process(const uint8_t* data, size_t len) {
+    std::lock_guard<std::mutex> lock(mutex);
+    if (verbose) {
+      for (size_t j = 0; j < len; j++) printf("%02X ", data[j]);
       printf("\n");
     }
-    if (self->local) self->parser.parse(msg->data(), (int)msg->size());
-    for (auto& f : self->forwarders) f->send(msg->data(), msg->size());
-    for (auto& out : self->outputs) {
+    if (local) parser.parse((uint8_t*)data, (int)len);
+    for (auto& f : forwarders) f->send(data, len);
+    for (auto& out : outputs) {
       try {
-        out->sendMessage(msg);
+        out->sendMessage(data, len);
       } catch (RtMidiError& e) {
         fprintf(stderr, "midi output error: %s\n", e.getMessage().c_str());
       }
+    }
+  }
+
+  /// All notes off and sustain off on all channels (also on the forward
+  /// targets)
+  void allNotesOff() {
+    for (uint8_t ch = 0; ch < 16; ch++) {
+      uint8_t sustain_off[3] = {(uint8_t)(0xB0 | ch), 64, 0};
+      uint8_t notes_off[3] = {(uint8_t)(0xB0 | ch), 123, 0};
+      process(sustain_off, 3);
+      process(notes_off, 3);
     }
   }
 };
@@ -226,6 +268,40 @@ static bool setupForwarders(const Options& opt, MidiInput& input) {
     input.forwarders.push_back(std::move(forwarder));
   }
   return true;
+}
+
+/// Waits until the time point: returns false if the program is stopped
+static bool waitUntil(std::chrono::steady_clock::time_point due) {
+  while (running) {
+    auto now = std::chrono::steady_clock::now();
+    if (now >= due) return true;
+    std::this_thread::sleep_for(std::min<std::chrono::steady_clock::duration>(
+        due - now, std::chrono::milliseconds(20)));
+  }
+  return false;
+}
+
+/// Plays the midi file in real time (own thread). Without --loop the program
+/// is stopped at the end, after the notes have faded out.
+static void playMidiFile(const MidiFileSong& song, MidiInput& input, bool loop) {
+  using namespace std::chrono;
+  while (running) {
+    auto start = steady_clock::now();
+    for (const MidiFileSong::Event& e : song.events) {
+      auto due = start + duration_cast<steady_clock::duration>(duration<double, std::milli>(e.time_ms));
+      if (!waitUntil(due)) break;
+      input.process(e.data, e.len);
+    }
+    input.allNotesOff();
+    if (!running) return;
+    printf("end of the midi file\n");
+    // pause of 2 s: the release of the notes, then again or stop
+    if (!waitUntil(steady_clock::now() + seconds(2))) return;
+    if (!loop) {
+      running = false;
+      return;
+    }
+  }
 }
 
 static void writeWavHeader(FILE* f, int rate, uint32_t data_bytes) {
@@ -292,7 +368,20 @@ int main(int argc, char** argv) {
     fprintf(stderr, "midi error: %s\n", e.getMessage().c_str());
     return 1;
   }
-  if (inputs.empty()) printf("no midi input: use --virtual or connect a midi keyboard\n");
+  if (inputs.empty() && opt.midi_file.empty())
+    printf("no midi input: use --virtual or connect a midi keyboard\n");
+
+  // midi file
+  MidiFileSong song;
+  if (!opt.midi_file.empty()) {
+    if (!song.load(opt.midi_file)) {
+      fprintf(stderr, "could not play %s: %s\n", opt.midi_file.c_str(), song.error.c_str());
+      return 1;
+    }
+    int seconds = (int)(song.durationMs() / 1000);
+    printf("midi file: %s (format %d, %d tracks, %d notes, %d:%02d)%s\n", opt.midi_file.c_str(), song.format,
+           song.track_count, song.noteCount(), seconds / 60, seconds % 60, opt.loop ? ", loop" : "");
+  }
 
   // instruments
   DynamicSampleSet file_set;
@@ -362,8 +451,24 @@ int main(int argc, char** argv) {
   Instrument drums = DrumInstrument(DrumKit());
   SampleSynthesizer synth;
   int channel = opt.channel > 0 ? opt.channel - 1 : (type == "drums" ? 9 : -1);
-  synth.setInstrument(channel, instrument);
-  if (opt.drums) synth.setInstrument(9, drums);
+  if (!opt.gm) {
+    synth.setInstrument(channel, instrument);
+    if (opt.drums) synth.setInstrument(9, drums);
+  }
+  // General MIDI: all instruments, selected by the program changes
+  GeneralMidiBank gm_bank;
+  if (opt.gm) {
+    GeneralMidiBank::SampleSets sets;
+    sets.piano = &GrandPiano();
+    sets.electricPiano = &Wurlitzer();
+    sets.guitar = &ElectricGuitar();
+    sets.uprightBass = &UprightBass();
+    sets.bass = &ElectricBass();
+    sets.saxophone = &TenorSax();
+    sets.clarinet = &Clarinet();
+    sets.drums = &DrumKit();
+    gm_bank.begin(synth, sets);
+  }
 
   // guitar amplifier (also usable with the other instruments)
   std::string amp_name = opt.amp;
@@ -372,18 +477,20 @@ int main(int argc, char** argv) {
                 : amp_name == "lead" ? GuitarAmp::Lead
                 : amp_name == "bass" ? GuitarAmp::Bass
                                      : GuitarAmp::Crunch);
-  if (amp_name != "off") synth.setEffect(channel, &amp);
+  if (amp_name != "off" && !opt.gm) synth.setEffect(channel, &amp);
   // rotary speaker of the organ
   RotarySpeaker rotary;
   rotary.setFast(opt.leslie == "fast");
-  if (type == "organ" && opt.leslie != "off") synth.setEffect(channel, &rotary);
+  if (type == "organ" && opt.leslie != "off" && !opt.gm) synth.setEffect(channel, &rotary);
   // tremolo (electric piano)
   float tremolo_depth = opt.tremolo >= 0 ? opt.tremolo : (type == "epiano" ? 0.3f : 0.0f);
   TremoloEffect tremolo(5.5f, tremolo_depth);
-  if (tremolo_depth > 0) synth.setEffect(channel, &tremolo);
+  if (tremolo_depth > 0 && !opt.gm) synth.setEffect(channel, &tremolo);
   synth.setVolume(opt.volume);
   synth.begin(opt.rate);
-  if (type == "organ")
+  if (opt.gm)
+    printf("instruments: General MIDI (program changes), drums on channel 10\n");
+  else if (type == "organ")
     printf("instrument: tonewheel organ, drawbars %s, leslie %s\n", opt.drawbars.c_str(), opt.leslie.c_str());
   else printf("instrument: %s (%s, %u bytes)%s%s%s\n", set->name, type.c_str(),
          (unsigned)set->dataSize, opt.drums ? " + drums on channel 10" : "",
@@ -412,9 +519,23 @@ int main(int argc, char** argv) {
     return std::chrono::duration<float>(std::chrono::steady_clock::now() - start).count();
   };
 
+  // plays the midi file in its own thread: started when the output is ready,
+  // stopped and joined before midi_input is destroyed
+  struct FilePlayer {
+    std::thread thread;
+    void start(const MidiFileSong& song, MidiInput& input, bool loop) {
+      if (!song.events.empty()) thread = std::thread(playMidiFile, std::cref(song), std::ref(input), loop);
+    }
+    ~FilePlayer() {
+      running = false;
+      if (thread.joinable()) thread.join();
+    }
+  } file_player;
+
   if (!opt.audio) {
     // only forward the midi messages
     printf("forwarding only (no audio) - press Ctrl+C to stop\n");
+    file_player.start(song, midi_input, opt.loop);
     while (running && (opt.seconds <= 0 || elapsed() < opt.seconds)) {
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
@@ -432,6 +553,7 @@ int main(int argc, char** argv) {
     std::vector<int16_t> buffer(opt.buffer * 2);
     uint64_t frames = 0;
     printf("recording to %s - press Ctrl+C to stop\n", opt.wav.c_str());
+    file_player.start(song, midi_input, opt.loop);
     while (running && (opt.seconds <= 0 || elapsed() < opt.seconds)) {
       // keep pace with the real time
       while (frames > elapsed() * opt.rate) std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -459,6 +581,7 @@ int main(int argc, char** argv) {
     return 1;
   }
   printf("audio: %s, %d Hz - press Ctrl+C to stop\n", device.playback.name, opt.rate);
+  file_player.start(song, midi_input, opt.loop);
   while (running && (opt.seconds <= 0 || elapsed() < opt.seconds)) {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }

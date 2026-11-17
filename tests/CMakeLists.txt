@@ -26,3 +26,13 @@ if(UNIX)
     target_compile_options(test_forwarders PRIVATE -Wall -Wextra -Wno-unused-parameter)
     add_test(NAME test_forwarders COMMAND test_forwarders)
 endif()
+
+# midi files of the desktop player and the General MIDI bank: needs
+# arduino-midi-fileparser (header only) in the sibling directory
+if(EXISTS "${PROJECT_SOURCE_DIR}/../arduino-midi-fileparser/src/MidiFileParser.h")
+    add_executable(test_midi_file test_midi_file.cpp)
+    target_link_libraries(test_midi_file PRIVATE TinyInstruments)
+    target_include_directories(test_midi_file PRIVATE ${PROJECT_SOURCE_DIR}/../arduino-midi-fileparser/src)
+    target_compile_options(test_midi_file PRIVATE -Wall -Wextra -Wno-unused-parameter)
+    add_test(NAME test_midi_file COMMAND test_midi_file)
+endif()

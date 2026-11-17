@@ -22,6 +22,7 @@
 #include "TinyInstruments/Organ.h"
 #include "TinyInstruments/RotarySpeaker.h"
 #include "TinyInstruments/Tremolo.h"
+#include "TinyInstruments/GeneralMidiBank.h"
 
 #ifndef TI_NO_NAMESPACE
 using namespace tinyinstruments;

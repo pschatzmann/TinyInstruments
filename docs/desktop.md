@@ -1,7 +1,7 @@
 # Desktop Player
 
 `tinyinstruments-player` plays the instruments on a computer with a USB midi
-keyboard and the sound card. It uses exactly the same code as the
+keyboard or a [midi file](#playing-midi-files) and the sound card. It uses exactly the same code as the
 microcontroller, so you can try out the instruments, the amplifier and the
 parameters before you flash a board. It can also
 [forward the midi messages to a microcontroller](#forwarding-midi-to-a-microcontroller)
@@ -33,6 +33,9 @@ The following libraries are downloaded by CMake (FetchContent):
 - [miniaudio](https://github.com/mackron/miniaudio) 0.11.22: audio output
 - [arduino-midi](https://github.com/pschatzmann/arduino-midi): midi parser
   (the sibling directory `../arduino-midi` is used if it exists)
+- [arduino-midi-fileparser](https://github.com/pschatzmann/arduino-midi-fileparser):
+  midi files (the sibling directory `../arduino-midi-fileparser` is used if it
+  exists)
 
 ## Build
 
@@ -63,6 +66,7 @@ all midi inputs:
 ./build/desktop/tinyinstruments-player --instrument clarinet
 ./build/desktop/tinyinstruments-player --instrument upright --wav recording.wav --seconds 30
 ./build/desktop/tinyinstruments-player --send tcp:192.168.1.40 --no-audio
+./build/desktop/tinyinstruments-player --midi-file song.mid --loop
 ```
 
 Stop the player with Ctrl+C.
@@ -72,6 +76,9 @@ Stop the player with Ctrl+C.
 | `--list` | list the midi input and output ports |
 | `--port N\|NAME` | midi input port number or part of its name (default: all) |
 | `--virtual` | open a virtual midi port `TinyInstruments` (e.g. for a DAW or `aconnect`) |
+| `--midi-file PATH` | play a midi file (`.mid`); the player stops at the end (see [Playing midi files](#playing-midi-files)) |
+| `--loop` | play the midi file again and again, with a pause of 2 s |
+| `--gm` | General MIDI: the program changes select the instruments (`GeneralMidiBank`); the default for `--midi-file`, unless `--instrument` or `--file` is given |
 | `--instrument NAME` | `upright`, `grand`, `epiano`, `drums`, `sax`, `clarinet`, `guitar`, `bass`, `upright-bass` or `organ` (synthesized, see [Tonewheel Organ](organ.md)) (default: `grand`) |
 | `--tremolo DEPTH` | tremolo 0..1 (default: 0.3 for `epiano`, otherwise off); the modulation wheel changes the depth |
 | `--drawbars DIGITS` | organ registration: 9 digits 0..8 (default: `888000000`) |
@@ -171,7 +178,36 @@ A BLE library in the player itself was not used: the cross-platform library
 SimpleBLE is under the Business Source License, which does not allow free
 commercial use.
 
-## Playing from a DAW or a midi file (Linux)
+## Playing midi files
+
+`--midi-file` plays a standard midi file (format 0 or 1):
+
+```
+./build/desktop/tinyinstruments-player --midi-file song.mid
+./build/desktop/tinyinstruments-player --midi-file song.mid --loop
+./build/desktop/tinyinstruments-player --midi-file song.mid --wav song.wav
+./build/desktop/tinyinstruments-player --midi-file song.mid --instrument epiano
+./build/desktop/tinyinstruments-player --midi-file song.mid --send tcp:192.168.1.40 --no-audio
+```
+
+- The file is parsed with arduino-midi-fileparser before it is played
+  ([MidiFileSong.h](../desktop/MidiFileSong.h)): the tracks are merged by time
+  and the tempo changes apply to all tracks. Without a tempo the song plays
+  at 120 BPM.
+- The General MIDI program changes of the file select the instruments
+  (`GeneralMidiBank`, the full versions of the sample sets; the same mapping as
+  the [midi-file-player](midi-files.md#instruments) example). With
+  `--instrument` or `--file` all channels are played by that instrument
+  instead (add `--gm` to use the General MIDI instruments anyway).
+- The events of the file take the same way as the ones of a keyboard: they can
+  be shown with `--verbose`, recorded with `--wav` and forwarded with `--send`
+  (e.g. to a board with `--no-audio`). A connected keyboard can be played at
+  the same time.
+- At the end (and with Ctrl+C) all notes and the sustain pedal are switched
+  off on all channels, also on the forward targets. Without `--loop` the player
+  stops 2 s after the end of the song.
+
+## Playing from a DAW (Linux)
 
 With `--virtual` the player opens the midi port `TinyInstruments`, which can be
 connected to other programs:
@@ -179,7 +215,7 @@ connected to other programs:
 ```
 ./build/desktop/tinyinstruments-player --virtual &
 aconnect -l                               # list the ports
-aplaymidi -p TinyInstruments song.mid     # play a midi file
+aplaymidi -p TinyInstruments song.mid     # play a midi file with ALSA
 ```
 
 ## Troubleshooting
@@ -191,6 +227,7 @@ aplaymidi -p TinyInstruments song.mid     # play a midi file
 | crackling | increase `--buffer` (e.g. 512) |
 | latency too high | decrease `--buffer` (e.g. 128) |
 | distorted | reduce `--volume` |
+| `could not play FILE: invalid midi file` | not a standard midi file (`.mid`); e.g. RIFF midi (`.rmi`) or karaoke files with another header are not supported |
 | `could not open serial ...` | check the path and the permissions (Linux: group `dialout`); close the serial monitor of the Arduino IDE |
 | `could not open tcp ...` | check the IP address and that `MidiIpServer` is started on the board |
 | `midi output 'NAME' not found` | check `--list`; BLE devices must be paired and connected first |

@@ -3,6 +3,8 @@
 #  - RtMidi: midi input (ALSA on Linux, CoreMIDI on macOS, WinMM on Windows)
 #  - miniaudio: audio output
 #  - arduino-midi: midi parser (the sibling directory is used if available)
+#  - arduino-midi-fileparser: midi files (--midi-file; sibling directory if
+#    available)
 include(FetchContent)
 
 FetchContent_Declare(rtmidi
@@ -37,11 +39,24 @@ if(NOT TARGET arduino-midi)
     endif()
 endif()
 
+if(NOT TARGET midi-file)
+    set(CMAKE_POLICY_VERSION_MINIMUM 3.5)  # its CMakeLists.txt requires CMake 3.0
+    if(EXISTS "${PROJECT_SOURCE_DIR}/../arduino-midi-fileparser/CMakeLists.txt")
+        add_subdirectory("${PROJECT_SOURCE_DIR}/../arduino-midi-fileparser" arduino-midi-fileparser)
+    else()
+        FetchContent_Declare(arduino-midi-fileparser
+            GIT_REPOSITORY https://github.com/pschatzmann/arduino-midi-fileparser.git
+            GIT_TAG main
+            GIT_SHALLOW TRUE)
+        FetchContent_MakeAvailable(arduino-midi-fileparser)
+    endif()
+endif()
+
 find_package(Threads REQUIRED)
 
 add_executable(tinyinstruments-player player.cpp serial_baud_linux.cpp)
 target_include_directories(tinyinstruments-player PRIVATE ${miniaudio_SOURCE_DIR})
-target_link_libraries(tinyinstruments-player PRIVATE TinyInstruments arduino-midi rtmidi
+target_link_libraries(tinyinstruments-player PRIVATE TinyInstruments arduino-midi midi-file rtmidi
     Threads::Threads ${CMAKE_DL_LIBS})
 if(UNIX AND NOT APPLE)
     target_link_libraries(tinyinstruments-player PRIVATE m)

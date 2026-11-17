@@ -188,6 +188,19 @@ ignored. If the new program uses another effect, the sounding notes of the
 channel fade out within 50 ms. The [all-instruments](../examples/all-instruments)
 example maps all instruments to the General MIDI programs.
 
+`GeneralMidiBank` provides a ready-made General MIDI mapping of all
+instruments (e.g. for midi files): you pass the sample sets, it defines the
+instruments, the effects and the bank (see [Playing MIDI Files](midi-files.md#instruments)):
+
+```cpp
+GeneralMidiBank instruments;  // global: it must stay alive
+
+GeneralMidiBank::SampleSets sets;
+sets.piano = &GrandPianoSmall();
+sets.drums = &DrumKitSmall();  // missing sample sets are replaced or silent
+instruments.begin(synth, sets);
+```
+
 ## Transposition
 
 Each midi channel and each instrument can be transposed, e.g. when a part is
@@ -207,7 +220,7 @@ bank.add(78, 78, whistle);      // selected with the program change
 The received keys are kept for the note off: a note which is held while the
 transposition changes keeps its pitch and is still released. The drum channel
 should not be transposed (the keys select the sounds). The
-[midi-file-player](../examples/midi-file-player) example uses transposed
+[midi-file-player](../examples/midi-file-player) example (`GeneralMidiBank`) uses transposed
 instruments for the piccolo and the whistle (see [Playing MIDI Files](midi-files.md)).
 
 ## Effects

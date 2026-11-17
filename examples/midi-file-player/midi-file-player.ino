@@ -28,6 +28,15 @@
  * | 112-127 sound effects           | silent                              |
  * | channel 10                      | drum kit                            |
  *
+ * The mapping is defined by GeneralMidiBank: change it with
+ * instruments.bank() after begin().
+ *
+ * The events are played in the order of the file, so only single track midi
+ * files (format 0) are supported: in a multi track file (format 1) the tracks
+ * would be played one after the other. Convert such a file to format 0 (e.g.
+ * with a DAW or a midi editor) or play it with the desktop player
+ * (tinyinstruments-player --midi-file), which merges the tracks.
+ *
  * Requirements:
  * - Libraries: arduino-audio-tools, arduino-midi-fileparser
  *   (https://github.com/pschatzmann/arduino-midi-fileparser)
@@ -50,26 +59,9 @@
 #include "samples/UprightBassSmall.h"
 #include "samples/WurlitzerSmall.h"
 
-// the instruments, selected with General MIDI program changes
-Instrument piano = PianoInstrument(GrandPianoSmall());
-Instrument epiano = ElectricPianoInstrument(WurlitzerSmall());
-TonewheelOrgan tonewheels("888000000");
-Instrument organ = OrganInstrument(tonewheels);
-Instrument guitar = GuitarInstrument(ElectricGuitarSmall());
-Instrument upright_bass = UprightBassInstrument(UprightBassSmall());
-Instrument bass = BassInstrument(ElectricBassSmall());
-Instrument sax = SaxophoneInstrument(TenorSaxSmall());
-Instrument clarinet = ClarinetInstrument(ClarinetSmall());
-const float CLARINET_VOLUME = 2.0f;  // +6 dB: it plays melodies (e.g. flute parts)
-// the clarinet also plays the piccolo and the whistle, which sound higher than
-// its range: transposed down (see setupInstruments())
-Instrument piccolo, whistle;
-Instrument drums = DrumInstrument(DrumKitSmall());
-Instrument silent;  // no sample set: the notes are ignored
-TremoloEffect tremolo(5.5f, 0.3f);
-RotarySpeaker leslie;
-GuitarAmp clean_amp(GuitarAmp::Clean), bass_amp(GuitarAmp::Bass);
-InstrumentBank bank;
+// the instruments, selected with General MIDI program changes (see the
+// table above): the small versions of the sample sets
+GeneralMidiBank instruments;
 
 SampleSynthesizer synth;
 SampleSynthesizerStream in(synth);
@@ -88,31 +80,19 @@ midi::midi_midi_event event;
 uint32_t start_ms = 0;
 double song_ms = 0;  // exact: rounding the time of each event would add up
 int note_count = 0;
+double us_per_quarter = 500000;  // tempo: 120 BPM until a Set Tempo event
 
 void setupInstruments() {
-  clarinet.volume = CLARINET_VOLUME;
-  piccolo = clarinet;
-  piccolo.transpose = -12;  // one octave lower
-  whistle = clarinet;
-  whistle.transpose = -24;  // two octaves lower
-  bank.add(0, 15, piano);
-  bank.add(4, 5, epiano, &tremolo);
-  bank.add(16, 23, organ, &leslie);
-  bank.add(24, 31, guitar, &clean_amp);
-  bank.add(32, 39, bass, &bass_amp);
-  bank.add(32, 32, upright_bass);
-  bank.add(40, 55, organ, &leslie);
-  bank.add(56, 67, sax);
-  bank.add(68, 79, clarinet);
-  bank.add(72, 72, piccolo);
-  bank.add(78, 78, whistle);
-  bank.add(80, 103, organ, &leslie);
-  bank.add(104, 111, guitar, &clean_amp);
-  bank.add(112, 127, silent);
-  bank.setDrumKit(drums);
-  synth.setInstrumentBank(&bank);
-  synth.setInstrument(-1, piano);  // until the first program change
-  synth.setInstrument(9, drums);   // General MIDI channel 10
+  GeneralMidiBank::SampleSets sets;
+  sets.piano = &GrandPianoSmall();
+  sets.electricPiano = &WurlitzerSmall();
+  sets.guitar = &ElectricGuitarSmall();
+  sets.uprightBass = &UprightBassSmall();
+  sets.bass = &ElectricBassSmall();
+  sets.saxophone = &TenorSaxSmall();
+  sets.clarinet = &ClarinetSmall();
+  sets.drums = &DrumKitSmall();
+  instruments.begin(synth, sets);
 }
 
 /// Keeps the buffer of the parser filled from the midi file
@@ -164,12 +144,17 @@ void processMidiFile() {
         parser.begin(false);
         song_ms = 0;
         note_count = 0;
+        us_per_quarter = 500000;
         start_ms = millis() + 2000;
         return;
       }
-      // the delta time of each event (also of the meta events) advances the song
-      double division = state.header.time_division != 0 ? state.header.time_division : 48;
-      song_ms += state.timeInTicks() * (double)state.tempo / division / 1000.0;
+      // the delta time of each event (also of the meta events) advances the
+      // song; without a Set Tempo event: 120 BPM (500000 us per quarter note)
+      double division = state.header.time_division > 0 ? state.header.time_division : 480;
+      song_ms += state.timeInTicks() * us_per_quarter / division / 1000.0;
+      // a tempo change applies to the following events
+      if (state.status == midi::MIDI_PARSER_TRACK_META && state.meta.type == midi::MIDI_META_SET_TEMPO)
+        us_per_quarter = state.tempo;
       if (state.status != midi::MIDI_PARSER_TRACK_MIDI) continue;
       event = state.midi;
       event_due_ms = (uint32_t)song_ms;

@@ -25,6 +25,7 @@ ctest --test-dir build --output-on-failure
 | `test_organ` | tonewheel organ: pitch of the drawbars, foldback, sustain, release, percussion (single triggered), drawbars with CCs; rotary speaker: stereo, slow and fast modulation, acceleration |
 | `test_octave` | octave sample sets: size, headers identical with the data files, every key sounds, pitch |
 | `test_forwarders` | midi forwarding of the desktop player: serial (pseudo terminal, 115200 and 31250 baud), TCP with reconnect, UDP, target parsing (POSIX only) |
+| `test_midi_file` | midi files of the desktop player: tracks of a format 1 file merged, tempo map, 120 BPM default, invalid files, the example song of arduino-midi-fileparser (4781 notes, 3:54); `GeneralMidiBank` mapping (only built if `../arduino-midi-fileparser` exists) |
 | `test_bass` | bass: pitch and octave down to the low E, bass amp keeps the low end, 4 strings, palm mute |
 | `test_guitar` | guitar: pitch, all keys, amp distortion per preset, echo tail, effect only on its channel, palm mute, midi control |
 

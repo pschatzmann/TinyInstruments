@@ -23,8 +23,8 @@ tonewheel organ.
   and a player for General MIDI files ([arduino-midi-fileparser](https://github.com/pschatzmann/arduino-midi-fileparser))
 - All example sketches also build and run unchanged on the desktop
   ([Arduino-Emulator](https://github.com/pschatzmann/Arduino-Emulator))
-- Desktop player for a USB midi keyboard, which can also forward the midi to a
-  microcontroller (serial, TCP, UDP, BLE)
+- Desktop player for a USB midi keyboard or midi files, which can also forward
+  the midi to a microcontroller (serial, TCP, UDP, BLE)
 
 ## Instruments and sizes
 

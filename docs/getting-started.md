@@ -101,8 +101,8 @@ Instead of compiling the samples into the program, they can also be
 
 ## Trying it out on the desktop
 
-The instruments can be played on a computer with a USB midi keyboard before
-you flash a board: see the [Desktop Player](desktop.md).
+The instruments can be played on a computer with a USB midi keyboard or a
+midi file before you flash a board: see the [Desktop Player](desktop.md).
 
 All the examples below also build and run unchanged on the desktop (sound
 card, serial midi on stdin, USB midi from the keyboards connected to the
@@ -121,7 +121,7 @@ computer (Linux), the GUI in a window): see
 | [bass-serial-midi](../examples/bass-serial-midi) | electric bass with amplifier, serial midi input | default |
 | [clarinet-serial-midi](../examples/clarinet-serial-midi) | clarinet, serial midi input | default |
 | [organ-serial-midi](../examples/organ-serial-midi) | tonewheel organ with rotary speaker (synthesized), serial midi input | default |
-| [midi-file-player](../examples/midi-file-player) | plays a midi file ([arduino-midi-fileparser](https://github.com/pschatzmann/arduino-midi-fileparser)), the General MIDI programs select the instruments, see [Playing MIDI Files](midi-files.md) | Huge APP |
+| [midi-file-player](../examples/midi-file-player) | plays a single track midi file ([arduino-midi-fileparser](https://github.com/pschatzmann/arduino-midi-fileparser)), the General MIDI programs select the instruments (`GeneralMidiBank`), see [Playing MIDI Files](midi-files.md) | Huge APP |
 | [jazz-trio-serial-midi](../examples/jazz-trio-serial-midi) | electric piano (channel 1), upright bass (channel 2) and drums (channel 10), small versions | default |
 | [piano-ble-midi](../examples/piano-ble-midi) | piano, BLE midi input | Huge APP |
 | [piano-usb-midi](../examples/piano-usb-midi) | piano, USB midi input: the board is a USB midi device (arduino-midi `MidiUsbDevice`, e.g. ESP32-S3 with "USB-OTG (TinyUSB)", RP2040) | default |
