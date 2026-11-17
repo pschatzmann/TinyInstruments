@@ -84,4 +84,5 @@ you flash a board: see the [Desktop Player](desktop.md).
 | [piano-drums-serial-midi](../examples/piano-drums-serial-midi) | grand piano and drums (channel 10) | Huge APP |
 | [file-psram-serial-midi](../examples/file-psram-serial-midi) | instrument loaded from LittleFS into PSRAM | with file system |
 | [all-instruments](../examples/all-instruments) | all instruments loaded from LittleFS into PSRAM, selected with program changes (General MIDI) | own partitions.csv (16 MB flash) |
+| [material-gui](../examples/material-gui) | touch GUI ([TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign)) for the ESP32-S3 2.8" display board: on-screen piano keyboard, midi input via serial/TCP/UDP, output via I2S or forwarded midi (serial/TCP/UDP) | 16 MB flash, 3 MB APP |
 | [benchmark](../examples/benchmark) | measures the CPU load (piano, guitar with amp) | Huge APP |
