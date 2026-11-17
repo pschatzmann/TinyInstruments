@@ -59,7 +59,8 @@ ctest --test-dir build-examples -L examples   # each sketch must run for 3 secon
 The examples are not built by default (`TI_BUILD_EXAMPLES=OFF`). Requirements:
 CMake 3.16+, a C++17 compiler, a sound card, internet access for the first
 build and, for material-gui, SDL2 (`sudo apt install libsdl2-dev`; without
-SDL2 material-gui is skipped). Tested on Linux.
+SDL2 material-gui is skipped) and ALSA (`sudo apt install libasound2-dev`, for
+the USB midi input). Tested on Linux.
 
 The sketches contain no desktop specific code. The platform specific parts
 are provided by the libraries and, for the hardware of material-gui, by
@@ -77,6 +78,14 @@ are provided by the libraries and, for the hardware of material-gui, by
 | `MidiBleServer` | not supported: an error is logged | arduino-midi |
 | display board `LCDBoardESP32S3_2_8Display` | SDL window (240x320), mouse as touch | [DesktopBoards.h](../desktop/emulator/DesktopBoards.h) |
 | audio board `ESP32S3HosyondDisplay` | placeholder: arduino-audio-driver is not used on the desktop | [AudioBoards/ESP32S3HosyondDisplay.h](../desktop/emulator/AudioBoards/ESP32S3HosyondDisplay.h) |
+| `Serial` midi input (material-gui) | also the USB midi keyboards and the virtual midi port `TinyInstruments` (RtMidi) | [DesktopUsbMidi.h](../desktop/emulator/DesktopUsbMidi.h) |
+
+To play material-gui with a USB midi keyboard, switch on the "Serial" midi
+input on the Setup page. All midi input ports are used (except "Midi
+Through"); the environment variable `TI_MIDI_PORT` selects the ports which
+contain this text. A DAW or a midi file can be connected to the virtual port
+`TinyInstruments`, e.g. `aplaymidi -p TinyInstruments song.mid`. The USB midi
+input can be switched off with `-DTI_EXAMPLES_USB_MIDI=OFF`.
 
 arduino-audio-tools, arduino-midi, arduino-midi-fileparser, TinyMaterialDesign and TinyGPU are used
 from the sibling directories (Arduino libraries folder) if available,

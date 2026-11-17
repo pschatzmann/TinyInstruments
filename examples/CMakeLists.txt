@@ -10,8 +10,9 @@
 #  - TinyGPU/TinyMaterialDesign: display and touch in an SDL window (only for
 #    material-gui, if SDL2 is installed)
 # and by desktop/emulator for the hardware of material-gui: the display board
-# (DesktopBoards.h) and the audio board (AudioBoards/*.h, arduino-audio-driver
-# is not used on the desktop).
+# (DesktopBoards.h), the audio board (AudioBoards/*.h, arduino-audio-driver
+# is not used on the desktop) and the USB midi keyboards as Serial input
+# (DesktopUsbMidi.h, RtMidi).
 #
 # The libraries are taken from the sibling directories (Arduino libraries
 # folder) if available, otherwise they are downloaded. Use
@@ -124,6 +125,23 @@ if(SDL2_FOUND)
     # arduino-audio-driver is not used: desktop/emulator replaces the board
     # definition (AudioBoards/*.h), the codec is the sound card
     target_include_directories(material-gui BEFORE PRIVATE ${PROJECT_SOURCE_DIR}/desktop/emulator)
+    # USB midi keyboards: received with the "Serial" midi input of the sketch
+    # (desktop/emulator/DesktopUsbMidi.h, RtMidi)
+    option(TI_EXAMPLES_USB_MIDI "material-gui on the desktop: USB midi keyboards as Serial input" ON)
+    if(TI_EXAMPLES_USB_MIDI)
+        if(NOT TARGET rtmidi)
+            FetchContent_Declare(rtmidi
+                GIT_REPOSITORY https://github.com/thestk/rtmidi.git
+                GIT_TAG 6.0.0
+                GIT_SHALLOW TRUE)
+            set(RTMIDI_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+            set(RTMIDI_BUILD_STATIC_LIBS ON CACHE BOOL "" FORCE)
+            FetchContent_MakeAvailable(rtmidi)
+        endif()
+        target_link_libraries(material-gui PRIVATE rtmidi)
+        target_compile_options(material-gui PRIVATE
+            "SHELL:-include ${PROJECT_SOURCE_DIR}/desktop/emulator/DesktopUsbMidi.h")
+    endif()
 else()
     message(STATUS "SDL2 not found: material-gui is not built")
 endif()
