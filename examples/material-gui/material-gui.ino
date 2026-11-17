@@ -27,18 +27,19 @@
  * message is never sent back to the input it came from.
  *
  * Instruments (compiled in, the small versions with 250 KB each): grand
- * piano, upright piano, electric guitar (clean amp), electric bass (bass
- * amp), tenor saxophone, clarinet, drum kit, and the synthesized tonewheel
- * organ with rotary speaker (no sample data). They are selected with General
+ * piano, upright piano, electric piano (Wurlitzer, tremolo), electric guitar
+ * (clean amp), upright bass, electric bass (bass amp), tenor saxophone,
+ * clarinet, drum kit, and the synthesized tonewheel organ with rotary speaker
+ * (no sample data). They are selected with General
  * MIDI program changes, so the selection is also forwarded.
  *
  * Requirements:
  * - ESP32-S3 2.8" display board (ILI9341, FT6336 touch, ES8311 codec), e.g.
  *   the Hosyond ESP32-S3 2.8" display; for another board change `board` and
  *   `out`.
- * - Partition scheme with a 3 MB application partition (the sketch needs
- *   about 2.9 MB), e.g. "16M Flash (3MB APP/9.9MB FATFS)" or "Huge APP".
- *   PSRAM is recommended.
+ * - 16 MB flash: select the partition scheme "Custom", which uses the
+ *   partitions.csv of this folder (6 MB application: the sketch needs about
+ *   3.6 MB). PSRAM is recommended.
  * - Libraries: TinyMaterialDesign, TinyGPU, arduino-audio-tools,
  *   arduino-audio-driver, arduino-midi
  */
@@ -62,7 +63,9 @@
 #include "samples/ElectricGuitarSmall.h"
 #include "samples/GrandPianoSmall.h"
 #include "samples/TenorSaxSmall.h"
+#include "samples/UprightBassSmall.h"
 #include "samples/UprightPianoKWSmall.h"
+#include "samples/WurlitzerSmall.h"
 
 // ---------------------------------------------------------------- settings
 // WiFi: with an empty SSID an access point TinyInstruments is opened
@@ -125,6 +128,9 @@ Instrument bass = BassInstrument(ElectricBassSmall());
 Instrument sax = SaxophoneInstrument(TenorSaxSmall());
 Instrument clarinet = ClarinetInstrument(ClarinetSmall());
 Instrument drums = DrumInstrument(DrumKitSmall());
+Instrument epiano = ElectricPianoInstrument(WurlitzerSmall());
+Instrument upright_bass = UprightBassInstrument(UprightBassSmall());
+Tremolo tremolo(5.5f, 0.3f);
 GuitarAmp clean_amp(GuitarAmp::Clean), bass_amp(GuitarAmp::Bass);
 TonewheelOrgan organ("888000000");  // synthesized: no sample data
 Instrument organ_instrument = OrganInstrument(organ);
@@ -139,9 +145,10 @@ struct InstrumentInfo {
   uint8_t first_note;  // lowest key of the keyboard
 };
 const InstrumentInfo instruments[] = {
-    {"Grand Piano", 0, 0, 48},  {"Upright Piano", 1, 0, 48}, {"E-Guitar", 27, 0, 48},
+    {"Grand Piano", 0, 0, 48},  {"Upright Piano", 1, 0, 48}, {"E-Piano", 4, 0, 48},
+    {"Organ", 16, 0, 48},       {"E-Guitar", 27, 0, 48},     {"Upright Bass", 32, 0, 36},
     {"E-Bass", 33, 0, 36},      {"Tenor Sax", 66, 0, 48},    {"Clarinet", 71, 0, 55},
-    {"Organ", 16, 0, 48},       {"Drum Kit", 0, 9, 36},
+    {"Drum Kit", 0, 9, 36},
 };
 const int instrument_count = sizeof(instruments) / sizeof(instruments[0]);
 int instrument = 0;
@@ -531,6 +538,8 @@ void setupAudio() {
   bank.add(1, 1, upright);
   bank.add(24, 31, guitar, &clean_amp);
   bank.add(32, 39, bass, &bass_amp);
+  bank.add(32, 32, upright_bass);
+  bank.add(4, 5, epiano, &tremolo);
   bank.add(64, 67, sax);
   bank.add(68, 71, clarinet);
   bank.add(16, 20, organ_instrument, &leslie);

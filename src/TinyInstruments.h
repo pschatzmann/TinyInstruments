@@ -21,6 +21,7 @@
 #include "TinyInstruments/GuitarAmp.h"
 #include "TinyInstruments/Organ.h"
 #include "TinyInstruments/RotarySpeaker.h"
+#include "TinyInstruments/Tremolo.h"
 
 #ifndef TI_NO_NAMESPACE
 using namespace tinyinstruments;

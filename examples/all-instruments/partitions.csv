@@ -1,4 +1,4 @@
-# 16 MB flash: 3 MB application, 12.9 MB LittleFS for the sample sets (data/*.bin: 7.6 MB, the full versions loaded by the sketch: 4.9 MB)
+# 16 MB flash: 3 MB application, 12.9 MB LittleFS for the sample sets (data/*.bin: 9.4 MB, the full versions loaded by the sketch: 6.3 MB)
 # Name,   Type, SubType, Offset,   Size
 nvs,      data, nvs,     0x9000,   0x5000,
 otadata,  data, ota,     0xe000,   0x2000,

@@ -7,20 +7,22 @@
  * |---------------------------------|--------------------------------|
  * | 0, 2-7 pianos                   | grand piano                    |
  * | 1 bright piano                  | upright piano                  |
+ * | 4, 5 electric pianos            | Wurlitzer, tremolo             |
  * | 16, 19, 20 drawbar organs       | tonewheel organ, rotary speaker|
  * | 17 percussive organ             | organ with percussion          |
  * | 18 rock organ                   | organ, all drawbars, overdrive |
  * | 24-28, 31 guitars               | electric guitar, clean amp     |
  * | 29 overdriven guitar            | electric guitar, crunch amp    |
  * | 30 distortion guitar            | electric guitar, lead amp      |
- * | 32-39 basses                    | electric bass, bass amp        |
+ * | 32 acoustic bass                | upright bass (pizzicato)       |
+ * | 33-39 basses                    | electric bass, bass amp        |
  * | 64-67 saxophones                | tenor saxophone                |
  * | 68-71 oboe, horn, bassoon, clar.| clarinet                       |
  * | channel 10                      | drum kit                       |
  *
  * Requirements:
  * - ESP32 with 16 MB flash and PSRAM (e.g. ESP32-S3 N16R8): the sample sets
- *   need 4.9 MB of PSRAM (the organ is synthesized). Enable PSRAM in the Tools
+ *   need 6.3 MB of PSRAM (the organ is synthesized). Enable PSRAM in the Tools
  *   menu.
  * - partitions.csv of this folder: 3 MB application, 12.9 MB LittleFS
  * - copy the files of the data folder of the library (*.bin) into the data
@@ -45,10 +47,11 @@
 
 // the sample sets in PSRAM
 DynamicSampleSet upright_samples, grand_samples, drum_samples, sax_samples, clarinet_samples,
-    guitar_samples, bass_samples;
+    guitar_samples, bass_samples, epiano_samples, upright_bass_samples;
 
 // the instruments: playing parameters for the sample sets
-Instrument upright, grand, drums, sax, clarinet, guitar, bass;
+Instrument upright, grand, drums, sax, clarinet, guitar, bass, epiano, upright_bass;
+Tremolo tremolo(5.5f, 0.3f);  // electric piano: CC1 depth
 GuitarAmp clean_amp(GuitarAmp::Clean), crunch_amp(GuitarAmp::Crunch),
     lead_amp(GuitarAmp::Lead), bass_amp(GuitarAmp::Bass);
 // the synthesized organs: registration and rotary speaker (CC1: fast/slow)
@@ -97,6 +100,14 @@ void setupInstruments() {
   if (load(bass_samples, "/ElectricBass.bin")) {
     bass = BassInstrument(bass_samples.sampleSet());
     bank.add(32, 39, bass, &bass_amp);
+  }
+  if (load(epiano_samples, "/Wurlitzer.bin")) {
+    epiano = ElectricPianoInstrument(epiano_samples.sampleSet());
+    bank.add(4, 5, epiano, &tremolo);
+  }
+  if (load(upright_bass_samples, "/UprightBass.bin")) {
+    upright_bass = UprightBassInstrument(upright_bass_samples.sampleSet());
+    bank.add(32, 32, upright_bass);
   }
   if (load(sax_samples, "/TenorSax.bin")) {
     sax = SaxophoneInstrument(sax_samples.sampleSet());

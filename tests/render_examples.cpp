@@ -99,6 +99,40 @@ static void windPhrase(int ch, int base) {
   synth.noteOff(ch, base);
 }
 
+static void epianoPhrase(int ch) {
+  // ii - V - I in C with jazz voicings, then a short melody
+  int chords[][4] = {{50, 53, 57, 60}, {55, 59, 62, 65}, {48, 52, 55, 59}, {48, 52, 55, 59}};
+  for (auto& c : chords) {
+    for (int n : c) synth.noteOn(ch, n, 85);
+    play(0.7f);
+    for (int n : c) synth.noteOff(ch, n);
+    play(0.05f);
+  }
+  int melody[] = {72, 74, 76, 79, 77, 76, 74, 72};
+  for (int n : melody) {
+    synth.noteOn(ch, n, 105);
+    play(0.18f);
+    synth.noteOff(ch, n);
+  }
+  for (int n : {36, 48, 52, 55, 59, 64}) synth.noteOn(ch, n, 110);
+  play(1.5f);
+  for (int n : {36, 48, 52, 55, 59, 64}) synth.noteOff(ch, n);
+}
+
+static void walkingBassPhrase(int ch) {
+  // walking bass: ii - V - I - VI in C
+  int line[] = {38, 41, 45, 48, 43, 47, 50, 49, 36, 40, 43, 45, 45, 44, 43, 41};
+  for (int n : line) {
+    synth.noteOn(ch, n, 100);
+    play(0.3f);
+    synth.noteOff(ch, n);
+    play(0.02f);
+  }
+  synth.noteOn(ch, 36, 115);
+  play(1.2f);
+  synth.noteOff(ch, 36);
+}
+
 static void guitarPhrase(int ch) {
   int a[] = {40, 47, 52, 56, 59, 64, 45, 52, 57, 61, 64, 69};
   for (int j = 0; j < 12; j++) {
@@ -125,6 +159,7 @@ static void bassPhrase(int ch) {
 int main(int argc, char** argv) {
   std::string dir = argc > 1 ? argv[1] : ".";
   GuitarAmp clean(GuitarAmp::Clean), bass_amp(GuitarAmp::Bass);
+  Tremolo tremolo(5.5f, 0.3f);
   struct Row {
     const char* name;
     Instrument (*preset)(const SampleSet&);
@@ -140,6 +175,8 @@ int main(int argc, char** argv) {
       {"Clarinet", ClarinetInstrument, 0, nullptr, [](int ch) { windPhrase(ch, 62); }},
       {"ElectricGuitar", GuitarInstrument, 0, &clean, guitarPhrase},
       {"ElectricBass", BassInstrument, 0, &bass_amp, bassPhrase},
+      {"Wurlitzer", ElectricPianoInstrument, 0, &tremolo, epianoPhrase},
+      {"UprightBass", UprightBassInstrument, 0, nullptr, walkingBassPhrase},
   };
   int count = 0;
   for (auto& row : rows) {

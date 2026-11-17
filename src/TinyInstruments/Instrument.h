@@ -197,6 +197,39 @@ inline Instrument OrganInstrument(TonewheelOrgan& organ) {
   return result;
 }
 
+/// Instrument with the parameters of an acoustic upright (double) bass played
+/// pizzicato: 4 notes (strings), no amplifier, soft notes are dark, vibrato
+/// with the modulation wheel
+inline Instrument UprightBassInstrument(const SampleSet& set) {
+  Instrument bass(set);
+  bass.maxNotes = 4;
+  bass.releaseLow = 0.18f;
+  bass.releaseHigh = 0.12f;
+  bass.velocityCurve = 1.2f;
+  bass.minCutoff = 600.0f;
+  bass.stereoWidth = 0.0f;
+  bass.restrikeTime = 0.02f;
+  bass.vibratoRate = 5.0f;
+  bass.vibratoDepth = 20.0f;
+  bass.pitchShift = PitchShift::Psola;
+  return bass;
+}
+
+/// Instrument with the parameters of an electric piano (Wurlitzer, use it
+/// optionally with a Tremolo effect): all keys have dampers, short release,
+/// little stereo spread
+inline Instrument ElectricPianoInstrument(const SampleSet& set) {
+  Instrument ep(set);
+  ep.releaseLow = 0.25f;
+  ep.releaseHigh = 0.12f;
+  ep.velocityCurve = 1.4f;
+  ep.minCutoff = 1500.0f;
+  ep.stereoWidth = 0.2f;
+  ep.restrikeTime = 0.02f;
+  ep.volume = 0.6f;  // the recordings are louder than the other instruments
+  return ep;
+}
+
 /// Instrument with the parameters of an acoustic piano
 inline Instrument PianoInstrument(const SampleSet& set) {
   Instrument piano(set);

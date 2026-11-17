@@ -9,6 +9,7 @@
  *   tinyinstruments-player --file data/TenorSax.bin --type sax
  *   tinyinstruments-player --instrument guitar --amp lead
  *   tinyinstruments-player --instrument organ --drawbars 888800000 --leslie fast
+ *   tinyinstruments-player --instrument epiano --tremolo 0.5
  *   tinyinstruments-player --virtual --wav out.wav --seconds 10
  *   tinyinstruments-player --send tcp:192.168.1.40 --no-audio
  *
@@ -41,7 +42,9 @@
 #include "samples/ElectricGuitar.h"
 #include "samples/GrandPiano.h"
 #include "samples/TenorSax.h"
+#include "samples/UprightBass.h"
 #include "samples/UprightPianoKW.h"
+#include "samples/Wurlitzer.h"
 
 using namespace tinyinstruments;
 
@@ -57,6 +60,7 @@ struct Options {
   std::string amp;  // clean, crunch, lead, off (default: crunch for the guitar)
   std::string drawbars = "888000000";  // organ registration
   std::string leslie = "slow";         // organ rotary speaker: slow, fast, off
+  float tremolo = -1;                  // electric piano tremolo depth (< 0: default)
   std::vector<std::string> send;  // forward targets
   bool audio = true;
   int channel = 0;  // 1..16, 0 = all
@@ -77,14 +81,17 @@ static void usage() {
       "  --list                 list the midi input and output ports\n"
       "  --port N|NAME          midi input port number or part of the name (default: all)\n"
       "  --virtual              open a virtual midi input port 'TinyInstruments'\n"
-      "  --instrument NAME      upright | grand | drums | sax | clarinet | guitar | bass |\n"
-      "                         organ (synthesized tonewheel organ)\n"
+      "  --instrument NAME      upright | grand | epiano | drums | sax | clarinet | guitar |\n"
+      "                         bass | upright-bass | organ (synthesized tonewheel organ)\n"
+      "  --tremolo DEPTH        tremolo 0..1 (default: 0.3 for the electric piano, otherwise\n"
+      "                         off; modulation wheel: depth)\n"
       "  --drawbars DIGITS      organ registration, 9 digits 0..8 (default: 888000000)\n"
       "  --leslie MODE          organ rotary speaker: slow | fast | off (default: slow,\n"
       "                         modulation wheel: fast/slow)\n"
       "                         (default: grand)\n"
       "  --file PATH            load the sample set from a file (e.g. data/GrandPiano.bin)\n"
-      "  --type TYPE            piano | drums | sax | clarinet | guitar | bass: playing\n"
+      "  --type TYPE            piano | epiano | drums | sax | clarinet | guitar | bass |\n"
+      "                         upright-bass: playing\n"
       "                         parameters for --file\n"
       "                         (default: from the file name)\n"
       "  --amp PRESET           amplifier: clean | crunch | lead | bass | off\n"
@@ -122,6 +129,7 @@ static bool parseArgs(int argc, char** argv, Options& opt) {
     else if (a == "--instrument") opt.instrument = next();
     else if (a == "--drawbars") opt.drawbars = next();
     else if (a == "--leslie") opt.leslie = next();
+    else if (a == "--tremolo") opt.tremolo = atof(next().c_str());
     else if (a == "--file") opt.file = next();
     else if (a == "--type") opt.type = next();
     else if (a == "--amp") opt.amp = next();
@@ -301,12 +309,20 @@ int main(int argc, char** argv) {
       type = opt.file.find("Drum") != std::string::npos     ? "drums"
              : opt.file.find("Sax") != std::string::npos    ? "sax"
              : opt.file.find("Clarinet") != std::string::npos ? "clarinet"
+             : opt.file.find("UprightBass") != std::string::npos ? "upright-bass"
+             : opt.file.find("Wurlitzer") != std::string::npos ? "epiano"
              : opt.file.find("Bass") != std::string::npos   ? "bass"
              : opt.file.find("Guitar") != std::string::npos ? "guitar"
                                                              : "piano";
     }
   } else if (opt.instrument == "organ") {
     type = "organ";
+  } else if (opt.instrument == "epiano") {
+    set = &Wurlitzer();
+    type = "epiano";
+  } else if (opt.instrument == "upright-bass") {
+    set = &UprightBass();
+    type = "upright-bass";
   } else if (opt.instrument == "upright") {
     set = &UprightPianoKW();
     type = "piano";
@@ -335,6 +351,8 @@ int main(int argc, char** argv) {
 
   TonewheelOrgan organ(opt.drawbars.c_str());
   Instrument instrument = type == "organ"    ? OrganInstrument(organ)
+                          : type == "epiano"   ? ElectricPianoInstrument(*set)
+                          : type == "upright-bass" ? UprightBassInstrument(*set)
                           : type == "drums"    ? DrumInstrument(*set)
                           : type == "sax"    ? SaxophoneInstrument(*set)
                           : type == "guitar" ? GuitarInstrument(*set)
@@ -359,6 +377,10 @@ int main(int argc, char** argv) {
   RotarySpeaker rotary;
   rotary.setFast(opt.leslie == "fast");
   if (type == "organ" && opt.leslie != "off") synth.setEffect(channel, &rotary);
+  // tremolo (electric piano)
+  float tremolo_depth = opt.tremolo >= 0 ? opt.tremolo : (type == "epiano" ? 0.3f : 0.0f);
+  Tremolo tremolo(5.5f, tremolo_depth);
+  if (tremolo_depth > 0) synth.setEffect(channel, &tremolo);
   synth.setVolume(opt.volume);
   synth.begin(opt.rate);
   if (type == "organ")

@@ -1,5 +1,5 @@
 # Unit tests: run with "ctest" in the build directory
-foreach(test_name test_adpcm test_voice test_synthesizer test_piano test_drums test_sax test_loader test_guitar test_bass test_clarinet test_psola test_small test_octave test_organ)
+foreach(test_name test_adpcm test_voice test_synthesizer test_piano test_drums test_sax test_loader test_guitar test_bass test_clarinet test_psola test_small test_octave test_organ test_jazz)
     add_executable(${test_name} ${test_name}.cpp)
     target_link_libraries(${test_name} PRIVATE TinyInstruments)
     target_compile_options(${test_name} PRIVATE -Wall -Wextra -Wno-unused-parameter)

@@ -142,7 +142,8 @@ def parse_sfz(path):
         key = r.get("key")
         lokey = parse_key(r.get("lokey", key if key else "0"))
         hikey = parse_key(r.get("hikey", key if key else "127"))
-        center = parse_key(r.get("pitch_keycenter", key if key else str(lokey)))
+        # SFZ: key= sets the root key, otherwise the default of pitch_keycenter is 60
+        center = parse_key(r.get("pitch_keycenter", key if key else "60"))
         sample = r["sample"].replace("\\", "/")
         result.append({
             "file": os.path.join(base, default_path, sample),
@@ -495,17 +496,21 @@ def thin_keys(regions, step):
     for root in roots:
         if not keep or root - keep[-1] >= step:
             keep.append(root)
+    # the key ranges of all regions (also the removed ones) per velocity range
+    # (layers can cover different keys): the kept regions cover them
+    bounds = {}
+    for r in regions:
+        vel = (r["lovel"], r["hivel"])
+        lo, hi = bounds.get(vel, (r["lokey"], r["hikey"]))
+        bounds[vel] = (min(lo, r["lokey"]), max(hi, r["hikey"]))
     regions = [r for r in regions if r["root"] in keep]
-    # the key ranges are computed per velocity range (layers can cover
-    # different keys)
     by_vel = {}
     for r in regions:
         by_vel.setdefault((r["lovel"], r["hivel"]), []).append(r)
     result = []
-    for rs in by_vel.values():
+    for vel, rs in by_vel.items():
         rs = sorted(rs, key=lambda r: r["root"])
-        lowest = min(r["lokey"] for r in rs)
-        highest = max(r["hikey"] for r in rs)
+        lowest, highest = bounds[vel]
         for i, r in enumerate(rs):
             r = dict(r)
             r["lokey"] = lowest if i == 0 else (rs[i - 1]["root"] + r["root"]) // 2 + 1
@@ -893,8 +898,20 @@ def main():
             decay_ln = 0.0  # the decay was only removed from the loop
         z = dict(r)
         if args.tune_correct and le > ls:
-            cents = estimate_cents(y[ls:le], args.rate, r["root"])
-            z["tune"] = int(max(-127, min(127, round(-cents))))
+            if args.mode == "sustain":
+                cents = estimate_cents(y[ls:le], args.rate, r["root"])
+            else:
+                # decaying sounds (e.g. plucked strings): the pitch drifts,
+                # what is heard is the pitch after the attack
+                a, b = int(0.1 * args.rate), int(0.5 * args.rate)
+                cents = estimate_cents(y[a:min(b, len(y))], args.rate, r["root"]) if len(y) > b else \
+                    estimate_cents(y[ls:le], args.rate, r["root"])
+            if abs(cents) <= 50:
+                z["tune"] = int(round(-cents))
+            else:
+                # more than a quarter tone: rather a wrong measurement (e.g.
+                # octave error) than a wrong tuning
+                print("WARNING: %s: %+.0f cents not corrected (implausible)" % (os.path.basename(r["file"]), cents))
         # marks as distances to the previous mark (the first one: position)
         z["marks"] = [m - (marks[k - 1] if k > 0 else 0) for k, m in enumerate(marks)]
         if any(d <= 0 or d > 65535 for d in z["marks"]):
