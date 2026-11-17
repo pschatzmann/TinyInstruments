@@ -15,7 +15,8 @@ tonewheel organ.
 - Smaller versions with ~250 KB and ~150 KB, also as headers ([versions and sizes](docs/instruments.md#versions-and-sizes))
 - Sample data compiled into flash, or loaded at runtime from any Stream (e.g. a file) into PSRAM
 - Output via [arduino-audio-tools](https://github.com/pschatzmann/arduino-audio-tools),
-  input via [arduino-midi](https://github.com/pschatzmann/arduino-midi)
+  input via [arduino-midi](https://github.com/pschatzmann/arduino-midi) (serial, BLE, TCP, UDP and
+  USB midi as device or host)
 - 10 piano notes need about 29% of one core of an ESP32-S3
 - Examples from simple serial midi sketches up to a touch GUI with an on-screen
   piano keyboard ([TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign))

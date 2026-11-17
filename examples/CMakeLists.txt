@@ -6,13 +6,13 @@
 #  - Arduino-Emulator: Arduino API, Serial/Serial2 (stdout/stdin), WiFi
 #    (sockets of the computer), LittleFS (a directory, by default the data
 #    folder of this library) and ESP
-#  - arduino-midi: midi
+#  - arduino-midi: midi, USB midi (MidiUsbHost/MidiUsbDevice: ALSA raw midi
+#    of the computer, e.g. a USB midi keyboard)
 #  - TinyGPU/TinyMaterialDesign: display and touch in an SDL window (only for
 #    material-gui, if SDL2 is installed)
 # and by desktop/emulator for the hardware of material-gui: the display board
 # (DesktopBoards.h), the audio board (AudioBoards/*.h, arduino-audio-driver
-# is not used on the desktop) and the USB midi keyboards as Serial input
-# (DesktopUsbMidi.h, RtMidi).
+# is not used on the desktop).
 #
 # The libraries are taken from the sibling directories (Arduino libraries
 # folder) if available, otherwise they are downloaded. Use
@@ -82,7 +82,9 @@ function(ti_example name)
         ${miniaudio_SOURCE_DIR})
     # IS_DESKTOP: desktop platform of arduino-audio-tools
     # LITTLEFS_ROOT: directory of the LittleFS files of the Arduino-Emulator
-    target_compile_definitions(${name} PRIVATE IS_DESKTOP
+    # HOST: Arduino-Emulator (like in its own build), e.g. arduino-midi uses
+    # ALSA raw midi for USB midi
+    target_compile_definitions(${name} PRIVATE IS_DESKTOP HOST
         LITTLEFS_ROOT="${PROJECT_SOURCE_DIR}/data")
     target_link_libraries(${name} PRIVATE TinyInstruments arduino-audio-tools arduino-midi
         arduino_emulator Threads::Threads ${CMAKE_DL_LIBS} ${ARGN})
@@ -95,7 +97,7 @@ foreach(example
         piano-demo drum-demo benchmark
         piano-serial-midi sax-serial-midi guitar-serial-midi bass-serial-midi
         clarinet-serial-midi organ-serial-midi jazz-trio-serial-midi piano-drums-serial-midi piano-ble-midi
-        file-psram-serial-midi all-instruments)
+        file-psram-serial-midi all-instruments piano-usb-midi)
     ti_example(${example})
 endforeach()
 
@@ -125,23 +127,6 @@ if(SDL2_FOUND)
     # arduino-audio-driver is not used: desktop/emulator replaces the board
     # definition (AudioBoards/*.h), the codec is the sound card
     target_include_directories(material-gui BEFORE PRIVATE ${PROJECT_SOURCE_DIR}/desktop/emulator)
-    # USB midi keyboards: received with the "Serial" midi input of the sketch
-    # (desktop/emulator/DesktopUsbMidi.h, RtMidi)
-    option(TI_EXAMPLES_USB_MIDI "material-gui on the desktop: USB midi keyboards as Serial input" ON)
-    if(TI_EXAMPLES_USB_MIDI)
-        if(NOT TARGET rtmidi)
-            FetchContent_Declare(rtmidi
-                GIT_REPOSITORY https://github.com/thestk/rtmidi.git
-                GIT_TAG 6.0.0
-                GIT_SHALLOW TRUE)
-            set(RTMIDI_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-            set(RTMIDI_BUILD_STATIC_LIBS ON CACHE BOOL "" FORCE)
-            FetchContent_MakeAvailable(rtmidi)
-        endif()
-        target_link_libraries(material-gui PRIVATE rtmidi)
-        target_compile_options(material-gui PRIVATE
-            "SHELL:-include ${PROJECT_SOURCE_DIR}/desktop/emulator/DesktopUsbMidi.h")
-    endif()
 else()
     message(STATUS "SDL2 not found: material-gui is not built")
 endif()
@@ -154,7 +139,7 @@ if(UNIX)
         piano-demo drum-demo benchmark
         piano-serial-midi sax-serial-midi guitar-serial-midi bass-serial-midi
         clarinet-serial-midi organ-serial-midi jazz-trio-serial-midi piano-drums-serial-midi piano-ble-midi
-        file-psram-serial-midi all-instruments midi-file-player)
+        file-psram-serial-midi all-instruments piano-usb-midi midi-file-player)
     if(TARGET material-gui)
         list(APPEND TI_EXAMPLE_TESTS material-gui)
     endif()

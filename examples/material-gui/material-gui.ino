@@ -1,8 +1,8 @@
 /**
  * @file material-gui.ino
  * @brief Touch GUI (Material Design, TinyMaterialDesign) for all instruments:
- * play on the rendered piano keyboard or receive midi via serial, TCP or UDP,
- * and output the sound via I2S or send the midi via serial, TCP or UDP.
+ * play on the rendered piano keyboard or receive midi via serial, USB, TCP or
+ * UDP, and output the sound via I2S or send the midi via serial, TCP or UDP.
  *
  * Default: on-screen keyboard -> I2S (the WiFi is only started when a TCP or
  * UDP input or output is selected).
@@ -20,6 +20,12 @@
  * - Serial: USB serial, 115200 baud
  * - TCP: port 5008 (one client)
  * - UDP: port 5008
+ * and a USB midi keyboard (arduino-midi MidiUsbHost, ESP32 Arduino core >=
+ * 3.3): connect the keyboard with an OTG adapter to the native USB port (the
+ * board needs to supply 5V on it). The USB host is only started when the "USB"
+ * input is switched on: from then on the USB port is used by the host, so the
+ * serial midi (and the log) over this port no longer work. "USB: not
+ * supported" is shown if the core provides no USB midi host.
  *
  * Midi outputs: forward the midi of the keyboard and of the other inputs to
  * Serial, to TCP or UDP of TARGET_HOST:TARGET_PORT (e.g. another
@@ -42,6 +48,9 @@
  *   3.6 MB). PSRAM is recommended.
  * - Libraries: TinyMaterialDesign, TinyGPU, arduino-audio-tools,
  *   arduino-audio-driver, arduino-midi
+ *
+ * On the desktop (examples/CMakeLists.txt) the USB input is a midi keyboard
+ * which is connected to the computer (ALSA raw midi).
  */
 
 #define TI_MAX_VOICES 16
@@ -55,6 +64,7 @@
 #include "AudioTools/AudioLibs/I2SCodecStream.h"
 #include "AudioBoards/ESP32S3HosyondDisplay.h"
 #include "Midi.h"
+#include "MidiUsb.h"
 #include "PianoKeyboard.h"
 #include "TinyInstrumentsAudioTools.h"
 #include "samples/ClarinetSmall.h"
@@ -154,10 +164,10 @@ const int instrument_count = sizeof(instruments) / sizeof(instruments[0]);
 int instrument = 0;
 
 // ---------------------------------------------------------------- midi routing
-enum Port { KeyboardPort, SerialPort, TcpPort, UdpPort, I2SPort };
-const char* port_names[] = {"Keyboard", "Serial", "TCP", "UDP", "I2S"};
+enum Port { KeyboardPort, SerialPort, UsbPort, TcpPort, UdpPort, I2SPort };
+const char* port_names[] = {"Keyboard", "Serial", "USB", "TCP", "UDP", "I2S"};
 Port output = I2SPort;
-bool input_enabled[4] = {true, false, false, false};
+bool input_enabled[5] = {true, false, false, false, false};
 
 WiFiServer tcp_server(LISTEN_PORT);
 WiFiClient tcp_in;   // client connected to our server
@@ -240,6 +250,7 @@ class MidiRouter : public MidiAction {
 } router;
 
 MidiParser serial_parser(&router), tcp_parser(&router), udp_parser(&router);
+MidiUsbHost usb_in(&router);  // USB midi keyboard
 
 // ---------------------------------------------------------------- widgets
 AppBar<RGB565> app_bar(Bounds(0, 0, kWidth, 36), "TinyInstruments");
@@ -268,17 +279,18 @@ Widget<RGB565>* play_page[] = {&prev_button, &instrument_label, &next_button, &o
 
 // setup page
 Label<RGB565> inputs_label(Bounds(12, 74, 216, 16), "Midi inputs (+ keyboard)", TypographyRole::kLabel);
-SwitchRow<RGB565> serial_row("Serial (115200 baud)");
+SwitchRow<RGB565> serial_row("Serial");
+SwitchRow<RGB565> usb_row("USB");
 SwitchRow<RGB565> tcp_row("TCP");
 SwitchRow<RGB565> udp_row("UDP");
-Label<RGB565> output_label(Bounds(12, 180, 216, 16), "Output", TypographyRole::kLabel);
-SegmentedButton<RGB565> output_select(Bounds(8, 198, kWidth - 16, 32));
+Label<RGB565> output_label(Bounds(12, 160, 216, 16), "Output", TypographyRole::kLabel);
+SegmentedButton<RGB565> output_select(Bounds(8, 178, kWidth - 16, 32));
 KeyValueRow<RGB565> wifi_row("WiFi", "off");
 KeyValueRow<RGB565> listen_row("Listen");
 KeyValueRow<RGB565> target_row("Target");
 KeyValueRow<RGB565> status_row("Status", "ready");
-Widget<RGB565>* setup_page[] = {&inputs_label, &serial_row,    &tcp_row,    &udp_row,   &output_label,
-                                &output_select, &wifi_row, &listen_row, &target_row, &status_row};
+Widget<RGB565>* setup_page[] = {&inputs_label,  &serial_row, &usb_row,    &tcp_row,    &udp_row,  &output_label,
+                                &output_select, &wifi_row,   &listen_row, &target_row, &status_row};
 
 // ---------------------------------------------------------------- GUI logic
 char range_text[16], listen_text[32], target_text[40], wifi_text[40];
@@ -364,6 +376,16 @@ void updateNetwork() {
   wifi_row.setValue(wifi_text);
   listen_row.setValue(listen_text);
   showStatus("network ready");
+}
+
+/// Starts the USB midi host (once): the keyboard can be plugged in later
+void startUsb() {
+  static bool started = false, ok = false;
+  if (!started) {
+    started = true;
+    ok = usb_in.begin();
+  }
+  showStatus(!ok ? "USB: not supported" : usb_in.isConnected() ? "USB connected" : "USB: no device");
 }
 
 void setOutput(Port port) {
@@ -458,12 +480,18 @@ void setupWidgets() {
   };
   for (auto* w : play_page) screen.addFixedWidget(*w);
 
-  int y = 92;
-  for (SwitchRow<RGB565>* row : {&serial_row, &tcp_row, &udp_row}) {
-    row->bounds = Bounds(12, y, 216, SwitchRow<RGB565>::kHeight);
-    y += SwitchRow<RGB565>::kHeight;
+  // the inputs in two columns: Serial, USB / TCP, UDP
+  int j = 0;
+  for (SwitchRow<RGB565>* row : {&serial_row, &usb_row, &tcp_row, &udp_row}) {
+    row->bounds = Bounds(12 + (j % 2) * 112, 92 + (j / 2) * SwitchRow<RGB565>::kHeight, 104,
+                         SwitchRow<RGB565>::kHeight);
+    j++;
   }
   serial_row.onChange = [](bool on) { input_enabled[SerialPort] = on; };
+  usb_row.onChange = [](bool on) {
+    input_enabled[UsbPort] = on;
+    if (on) startUsb();
+  };
   tcp_row.onChange = [](bool on) {
     input_enabled[TcpPort] = on;
     if (on) startNetwork();
@@ -480,7 +508,7 @@ void setupWidgets() {
     for (int j = 0; j < 4; j++)
       if (mask & (1u << j)) setOutput(ports[j]);
   };
-  y = 238;
+  int y = 218;
   snprintf(target_text, sizeof(target_text), "%s:%u", TARGET_HOST, TARGET_PORT);
   target_row.setValue(target_text);
   listen_row.setValue("-");
@@ -505,6 +533,12 @@ void readInputs() {
       router.source = SerialPort;
       serial_parser.parse(buffer, n);
     }
+  }
+  if (input_enabled[UsbPort]) {
+    bool connected = usb_in.isConnected();
+    router.source = UsbPort;
+    usb_in.loop();
+    if (usb_in.isConnected() != connected) showStatus(connected ? "USB disconnected" : "USB connected");
   }
   if (!servers_started) return;
   if (input_enabled[TcpPort]) {

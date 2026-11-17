@@ -106,7 +106,7 @@ times, e.g. to play on several boards.
 | `serial:PATH[:BAUD]` | raw midi bytes, default 115200 baud | `MidiStreamIn` on `Serial` |
 | `tcp:HOST[:PORT]` | raw midi bytes, default port 5008, reconnects automatically | `MidiIpServer` |
 | `udp:HOST[:PORT]` | one datagram per message, default port 5008 | `MidiUdpServer` |
-| `midi:NAME` | midi output port whose name contains NAME | USB midi device (e.g. ESP32-S3 with TinyUSB) |
+| `midi:NAME` | midi output port whose name contains NAME | `MidiUsbDevice` (USB midi device, e.g. ESP32-S3 with "USB-OTG (TinyUSB)" or RP2040, see [piano-usb-midi](../examples/piano-usb-midi)) |
 | `ble:NAME` | BLE midi device paired by the operating system | `MidiBleServer` |
 
 ```
@@ -114,6 +114,8 @@ times, e.g. to play on several boards.
 tinyinstruments-player --send serial:/dev/ttyUSB0 --no-audio
 # standard midi (DIN) with a USB serial adapter
 tinyinstruments-player --send serial:/dev/ttyUSB0:31250
+# USB midi device (piano-usb-midi: MidiUsbDevice "TinyPiano")
+tinyinstruments-player --send midi:TinyPiano --no-audio
 # WiFi
 tinyinstruments-player --send tcp:192.168.1.40 --no-audio
 tinyinstruments-player --send udp:esp32.local:5008 --no-audio

@@ -51,6 +51,30 @@ void loop() {
 }
 ```
 
+Other midi inputs of arduino-midi are used the same way, e.g. USB midi
+(`MidiUsb.h`, see [piano-usb-midi](../examples/piano-usb-midi)):
+
+```cpp
+#include "MidiUsb.h"  // instead of Midi.h
+...
+MidiUsbDevice midi_in("TinyPiano", &action);  // the board is a USB midi device
+// MidiUsbHost midi_in(&action);              // or: a USB midi keyboard on the board
+
+void setup() {
+  midi_in.begin();
+  ...
+}
+```
+
+`MidiUsbDevice` needs a board with native USB: ESP32-S2/S3/P4 with Tools - USB
+Mode "USB-OTG (TinyUSB)", RP2040/RP2350 (`#include <MIDIUSB.h>` before
+`MidiUsb.h` with the default "Pico SDK" USB stack, or `<Adafruit_TinyUSB.h>`
+with "Adafruit TinyUSB"). `MidiUsbHost` needs the ESP32 Arduino core >= 3.3 (or
+Adafruit TinyUSB with host support) and an OTG adapter which supplies 5V to the
+keyboard; while the host is running the USB port can not be used for `Serial`.
+See the [arduino-midi](https://github.com/pschatzmann/arduino-midi#usb-midi)
+documentation for all platforms.
+
 To use another instrument, include its header and use the matching preset:
 
 | Instrument | Header | Preset | Midi channel |
@@ -81,7 +105,8 @@ The instruments can be played on a computer with a USB midi keyboard before
 you flash a board: see the [Desktop Player](desktop.md).
 
 All the examples below also build and run unchanged on the desktop (sound
-card, midi on stdin, the GUI in a window): see
+card, serial midi on stdin, USB midi from the keyboards connected to the
+computer (Linux), the GUI in a window): see
 [running the examples on the desktop](testing.md#running-the-examples-on-the-desktop).
 
 ## Examples
@@ -99,8 +124,9 @@ card, midi on stdin, the GUI in a window): see
 | [midi-file-player](../examples/midi-file-player) | plays a midi file ([arduino-midi-fileparser](https://github.com/pschatzmann/arduino-midi-fileparser)), the General MIDI programs select the instruments, see [Playing MIDI Files](midi-files.md) | Huge APP |
 | [jazz-trio-serial-midi](../examples/jazz-trio-serial-midi) | electric piano (channel 1), upright bass (channel 2) and drums (channel 10), small versions | default |
 | [piano-ble-midi](../examples/piano-ble-midi) | piano, BLE midi input | Huge APP |
+| [piano-usb-midi](../examples/piano-usb-midi) | piano, USB midi input: the board is a USB midi device (arduino-midi `MidiUsbDevice`, e.g. ESP32-S3 with "USB-OTG (TinyUSB)", RP2040) | default |
 | [piano-drums-serial-midi](../examples/piano-drums-serial-midi) | grand piano and drums (channel 10) | Huge APP |
 | [file-psram-serial-midi](../examples/file-psram-serial-midi) | instrument loaded from LittleFS into PSRAM | with file system |
 | [all-instruments](../examples/all-instruments) | all instruments loaded from LittleFS into PSRAM, selected with program changes (General MIDI) | own partitions.csv (16 MB flash) |
-| [material-gui](../examples/material-gui) | touch GUI ([TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign)) for the ESP32-S3 2.8" display board: on-screen piano keyboard, midi input via serial/TCP/UDP, output via I2S or forwarded midi (serial/TCP/UDP) | Custom: own partitions.csv (16 MB flash, 6 MB application) |
+| [material-gui](../examples/material-gui) | touch GUI ([TinyMaterialDesign](https://github.com/pschatzmann/TinyMaterialDesign)) for the ESP32-S3 2.8" display board: on-screen piano keyboard, midi input via serial/USB (keyboard on the USB host port)/TCP/UDP, output via I2S or forwarded midi (serial/TCP/UDP) | Custom: own partitions.csv (16 MB flash, 6 MB application) |
 | [benchmark](../examples/benchmark) | measures the CPU load (piano, guitar with amp) | Huge APP |
