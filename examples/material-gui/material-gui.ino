@@ -12,7 +12,8 @@
  *   received from the midi inputs.
  * - "Setup" page: the midi inputs (the on-screen keyboard is always active),
  *   the output and the network status.
- * - Menu (app bar): "Exit" stops the sound and switches the device off (deep
+ * - Menu (app bar): "Dark mode" / "Light mode" switches between the light and
+ *   the dark theme; "Exit" stops the sound and switches the device off (deep
  *   sleep: the reset button starts it again).
  *
  * Midi inputs (raw midi bytes, as sent by the desktop player
@@ -255,8 +256,9 @@ MidiUsbHost usb_in(&router);  // USB midi keyboard
 // ---------------------------------------------------------------- widgets
 AppBar<RGB565> app_bar(Bounds(0, 0, kWidth, 36), "TinyInstruments");
 IconButton<RGB565> menu_button;
-Menu<RGB565> menu(Bounds(kWidth - 164, 36, 160, 44));
-ListItem<RGB565> exit_item;
+Menu<RGB565> menu(Bounds(kWidth - 164, 36, 160, 88));
+ListItem<RGB565> theme_item, exit_item;
+bool dark_mode = false;
 Dialog<RGB565> exit_dialog(Bounds(16, (kHeight - 150) / 2, kWidth - 32, 150), "Exit?",
                            "The sound is stopped and the device is switched off.");
 Button<RGB565> exit_cancel, exit_confirm;
@@ -411,6 +413,28 @@ void drawPowerIcon(tinygpu::ISurface<RGB_T>& target, const Bounds& r, RGB_T colo
   drawLineThick(target, cx, cy - radius - 1, cx, cy - 1, color, thickness);
 }
 
+/// Light/dark icon of the theme menu item: a circle with the left half filled
+template <typename RGB_T>
+void drawThemeIcon(tinygpu::ISurface<RGB_T>& target, const Bounds& r, RGB_T color, uint8_t thickness = 2) {
+  const int32_t radius = r.w * 3 / 8;
+  const int32_t cx = r.centerX(), cy = r.centerY();
+  target.drawArc(toPx(cx), toPx(cy), toPx(radius), 0.0f, 360.0f, color, thickness);
+  for (int32_t dy = -radius; dy <= radius; dy++) {
+    const int32_t dx = (int32_t)sqrtf((float)(radius * radius - dy * dy));
+    target.drawLine(toPx(cx - dx), toPx(cy + dy), toPx(cx), toPx(cy + dy), color);
+  }
+}
+
+/// Switches between the light and the dark theme: the menu item offers the
+/// other one
+void setDarkMode(bool dark) {
+  dark_mode = dark;
+  theme = dark ? defaultDarkTheme<RGB565>() : defaultTheme<RGB565>();
+  screen.setTheme(theme);  // pushes the theme into all widgets
+  theme_item.setTitle(dark ? "Light mode" : "Dark mode");
+  screen.invalidate();
+}
+
 /// "Exit" in the menu: stops the sound and switches the device off (deep
 /// sleep without wake-up source: only the reset button starts it again)
 void shutdown() {
@@ -436,7 +460,13 @@ void setupWidgets() {
   menu_button.onClick = []() { screen.presentDialog(menu); };
   app_bar.trailing = &menu_button;
   screen.addFixedWidget(app_bar);
-  exit_item = ListItem<RGB565>(menu.itemRect(0, 44), "Exit", drawPowerIcon<RGB565>);
+  theme_item = ListItem<RGB565>(menu.itemRect(0, 44), "Dark mode", drawThemeIcon<RGB565>);
+  theme_item.onClick = []() {
+    screen.dismissDialog();
+    setDarkMode(!dark_mode);
+  };
+  menu.addItem(theme_item);
+  exit_item = ListItem<RGB565>(menu.itemRect(1, 44), "Exit", drawPowerIcon<RGB565>);
   exit_item.onClick = []() {
     screen.dismissDialog();
     screen.presentDialog(exit_dialog);

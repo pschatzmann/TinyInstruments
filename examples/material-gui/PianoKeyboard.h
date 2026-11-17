@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <functional>
 
 #include <TinyMaterialDesign.h>
@@ -95,14 +96,20 @@ class PianoKeyboard : public tinymd::Widget<RGB_T> {
     const tinymd::Bounds& b = this->bounds;
     const int32_t black_h = b.h * 58 / 100;
     target.fillRect(toPx(b.x), toPx(b.y), toPx(b.w), toPx(b.h), colors.outline);
+    // the keys keep their natural look in the light and in the dark theme:
+    // white keys with the lighter, black keys with the darker of surface and
+    // onSurface
+    RGB_T white = colors.surface, black = colors.onSurface;
+    if (brightness(white) < brightness(black)) std::swap(white, black);
+    const RGB_T label_color = tinymd::blend(white, black, 0.6f);
     // white keys
     tinygpu::IFont<RGB_T>& font = *this->theme().typography.label;
     for (int k = 0; k < white_keys; k++) {
       int32_t x0 = whiteX(k), x1 = whiteX(k + 1);
       int note = noteOfWhite(k);
-      RGB_T color = colors.surface;
-      if (isPressed(note)) color = tinymd::blend(colors.surface, colors.primary, 0.55f);
-      else if (isMarked(note)) color = tinymd::blend(colors.surface, colors.secondary, 0.35f);
+      RGB_T color = white;
+      if (isPressed(note)) color = tinymd::blend(white, colors.primary, 0.55f);
+      else if (isMarked(note)) color = tinymd::blend(white, colors.secondary, 0.35f);
       target.fillRoundRect(toPx(x0 + 1), toPx(b.y), toPx(x1 - x0 - 1), toPx(b.h - 1), 3, color);
       if (note % 12 == 0) {  // label of the C keys, e.g. "C4"
         char label[6];
@@ -110,7 +117,7 @@ class PianoKeyboard : public tinymd::Widget<RGB_T> {
         int32_t tw = font.measureTextWidth(label);
         font.drawText(target, static_cast<int16_t>((x0 + x1 - tw) / 2),
                       static_cast<int16_t>(b.bottom() - font.getHeight(1) - 4), label,
-                      colors.onSurfaceVariant, color, false);
+                      label_color, color, false);
       }
     }
     // black keys
@@ -119,7 +126,7 @@ class PianoKeyboard : public tinymd::Widget<RGB_T> {
       if (!hasBlackAfter(note)) continue;
       int32_t x0, x1;
       blackRange(k, x0, x1);
-      RGB_T color = colors.onSurface;
+      RGB_T color = black;
       if (isPressed(note + 1)) color = colors.primary;
       else if (isMarked(note + 1)) color = colors.secondary;
       target.fillRoundRect(toPx(x0), toPx(b.y), toPx(x1 - x0), toPx(black_h), 2, color);
@@ -138,6 +145,11 @@ class PianoKeyboard : public tinymd::Widget<RGB_T> {
   }
 
  protected:
+  /// Perceived brightness (0..255) of a color
+  static int brightness(RGB_T c) {
+    return (c.getRed() * 299 + c.getGreen() * 587 + c.getBlue() * 114) / 1000;
+  }
+
   int white_keys;
   int first_note = 48;  // C3
   int held[kMaxTouches];
