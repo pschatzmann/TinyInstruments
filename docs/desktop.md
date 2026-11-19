@@ -67,6 +67,7 @@ all midi inputs:
 ./build/desktop/tinyinstruments-player --instrument upright --wav recording.wav --seconds 30
 ./build/desktop/tinyinstruments-player --send tcp:192.168.1.40 --no-audio
 ./build/desktop/tinyinstruments-player --midi-file song.mid --loop
+./build/desktop/tinyinstruments-player --port Keystation --send midi:UM-ONE --thru --no-audio
 ```
 
 Stop the player with Ctrl+C.
@@ -96,6 +97,7 @@ Stop the player with Ctrl+C.
 | `--verbose` | print the received midi messages (hex) |
 | `--send TARGET` | forward the midi messages (repeatable, see below) |
 | `--no-audio` | do not play on the desktop: only forward |
+| `--thru` | forward all messages unchanged, also system exclusive, clock and active sensing (default: they are ignored), see [MIDI thru](#midi-thru-copy-an-input-to-an-output) |
 
 All midi controllers of the instruments work as on the microcontroller, e.g.
 the sustain pedal, the modulation wheel (vibrato) or CC19 to switch the amp
@@ -178,6 +180,27 @@ A BLE library in the player itself was not used: the cross-platform library
 SimpleBLE is under the Business Source License, which does not allow free
 commercial use.
 
+## MIDI thru: copy an input to an output
+
+The player can copy one midi input to a midi output, e.g. a USB keyboard to a
+USB midi interface, a synthesizer or a board with `MidiUsbDevice`:
+
+```
+./build/desktop/tinyinstruments-player --list
+./build/desktop/tinyinstruments-player --port Keystation --send midi:UM-ONE --thru --no-audio
+```
+
+- `--port` selects the input (number or part of the name; without `--port`
+  all inputs are copied), `--send midi:NAME` the output (part of the name, see
+  `--list`). `--send` can be repeated, e.g. to copy to two outputs or to a
+  board via TCP at the same time.
+- `--thru` copies all messages unchanged, also system exclusive (e.g. patch
+  dumps), clock and start/stop (e.g. to sync a drum machine) and active
+  sensing. Without `--thru` these are ignored.
+- Without `--no-audio` the notes are also played on the desktop.
+- An output which is also one of the inputs (e.g. `Midi Through`) is refused:
+  it would send the messages back to the input in an endless loop.
+
 ## Playing midi files
 
 `--midi-file` plays a standard midi file (format 0 or 1):
@@ -230,4 +253,5 @@ aplaymidi -p TinyInstruments song.mid     # play a midi file with ALSA
 | `could not play FILE: invalid midi file` | not a standard midi file (`.mid`); e.g. RIFF midi (`.rmi`) or karaoke files with another header are not supported |
 | `could not open serial ...` | check the path and the permissions (Linux: group `dialout`); close the serial monitor of the Arduino IDE |
 | `could not open tcp ...` | check the IP address and that `MidiIpServer` is started on the board |
+| `midi output ... is also an input` | the output would send the messages back to the input: select the input with `--port` |
 | `midi output 'NAME' not found` | check `--list`; BLE devices must be paired and connected first |

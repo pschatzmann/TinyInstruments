@@ -13,6 +13,7 @@
  *   tinyinstruments-player --virtual --wav out.wav --seconds 10
  *   tinyinstruments-player --send tcp:192.168.1.40 --no-audio
  *   tinyinstruments-player --midi-file song.mid --loop
+ *   tinyinstruments-player --port Keystation --send midi:UM-ONE --thru --no-audio
  *
  * Midi files (--midi-file) are parsed with arduino-midi-fileparser
  * (MidiFileSong.h: the tracks are merged), the General MIDI program changes
@@ -71,6 +72,7 @@ struct Options {
   std::string midi_file;          // midi file to play
   bool loop = false;              // repeat the midi file
   bool gm = false;                // General MIDI instruments (program changes)
+  bool thru = false;              // forward all message types (sysex, clock...)
   bool instrument_selected = false;  // --instrument or --file was given
   bool audio = true;
   int channel = 0;  // 1..16, 0 = all
@@ -125,7 +127,9 @@ static void usage() {
       "                           udp:HOST[:PORT]     arduino-midi MidiUdpServer (default 5008)\n"
       "                           midi:NAME           midi output port, e.g. a USB midi device\n"
       "                           ble:NAME            BLE midi device paired by the operating system\n"
-      "  --no-audio             do not play the instruments on the desktop (only forward)\n");
+      "  --no-audio             do not play the instruments on the desktop (only forward)\n"
+      "  --thru                 midi thru: forward all messages unchanged, also sysex, clock,\n"
+      "                         start/stop and active sensing (default: they are ignored)\n");
 }
 
 static bool parseArgs(int argc, char** argv, Options& opt) {
@@ -167,6 +171,7 @@ static bool parseArgs(int argc, char** argv, Options& opt) {
     else if (a == "--verbose") opt.verbose = true;
     else if (a == "--send") opt.send.push_back(next());
     else if (a == "--no-audio") opt.audio = false;
+    else if (a == "--thru") opt.thru = true;
     else {
       usage();
       return false;
@@ -224,12 +229,28 @@ struct MidiInput {
   }
 };
 
+/// Names of the opened midi input ports: an output port with the same name
+/// would send the messages back to the input (endless loop, e.g. "Midi
+/// Through")
+static std::vector<std::string> input_names;
+static bool output_is_input = false;
+
 /// Opens the midi output port whose name contains the indicated text
 static std::unique_ptr<RtMidiOut> openMidiOutput(const std::string& name) {
   std::unique_ptr<RtMidiOut> out(new RtMidiOut(RtMidi::UNSPECIFIED, "TinyInstruments Out"));
   for (unsigned j = 0; j < out->getPortCount(); j++) {
     std::string port = out->getPortName(j);
     if (port.find(name) != std::string::npos && port.find("TinyInstruments") == std::string::npos) {
+      for (const std::string& input : input_names) {
+        if (input == port) {
+          fprintf(stderr,
+                  "midi output '%s' is also an input: this would be an endless loop (select the "
+                  "input with --port)\n",
+                  port.c_str());
+          output_is_input = true;
+          return nullptr;
+        }
+      }
       out->openPort(j, "TinyInstruments");
       printf("forwarding to midi output: %s\n", port.c_str());
       return out;
@@ -249,6 +270,7 @@ static bool setupForwarders(const Options& opt, MidiInput& input) {
     if (target.type == "midi" || target.type == "ble") {
       std::unique_ptr<RtMidiOut> out = openMidiOutput(target.address);
       if (!out) {
+        if (output_is_input) return false;  // reported by openMidiOutput()
         fprintf(stderr, "midi output '%s' not found (see --list)\n", target.address.c_str());
         if (target.type == "ble")
           fprintf(stderr,
@@ -357,6 +379,7 @@ int main(int argc, char** argv) {
       in->openPort(j, "TinyInstruments");
       printf("midi input: %s\n", name.c_str());
       inputs.push_back(std::move(in));
+      input_names.push_back(name);
     }
     if (opt.virtual_port) {
       std::unique_ptr<RtMidiIn> in(new RtMidiIn(RtMidi::UNSPECIFIED, "TinyInstruments"));
@@ -508,7 +531,9 @@ int main(int argc, char** argv) {
     return 1;
   }
   for (auto& in : inputs) {
-    in->ignoreTypes(true, true, true);  // sysex, timing, active sensing
+    // sysex, timing (clock, start/stop), active sensing: only with --thru;
+    // the parser of the synthesizer skips them
+    in->ignoreTypes(!opt.thru, !opt.thru, !opt.thru);
     in->setCallback(&MidiInput::callback, &midi_input);
   }
 
