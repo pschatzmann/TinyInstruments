@@ -59,7 +59,7 @@ versions of an instrument). Details and quality measurements:
 - [Performance](docs/performance.md)
 - [Desktop Player](docs/desktop.md)
 - [Design](docs/design.md)
-- [Creating your own Sample Sets](docs/sample-sets.md)
+- [Creating your own Sample Sets](docs/sample-sets.md) (and the [sources of the included ones](docs/sample-sets.md#sources-of-the-included-sample-sets))
 - [Testing](docs/testing.md) and [running the examples on the desktop](docs/testing.md#running-the-examples-on-the-desktop)
 
 ## Installation in Arduino

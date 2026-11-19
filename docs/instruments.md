@@ -161,7 +161,7 @@ done by resampling (small changes).
 |---|---|
 | note on / off | velocity: loudness, velocity layer, brightness |
 | pitch bend | +/- 2 semitones (`setPitchBendRange()`) |
-| CC1 modulation wheel | vibrato depth |
+| CC1 modulation wheel | vibrato depth of the saxophone, clarinet, guitar and basses (`vibratoDepth`); no effect on the pianos and the drums (a piano has no vibrato); the electric piano tremolo and the organ rotary speaker use it as well (see the effects) |
 | CC2 breath controller | volume of the channel |
 | CC7 volume, CC11 expression | volume of the channel (smoothed) |
 | CC64 sustain pedal | holds the notes |

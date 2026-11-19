@@ -15,6 +15,13 @@ python3 tools/sfz2header.py MyPiano.sfz --name MyPiano --budget 700000 \
 The zone lengths go from long (bass, `--bass`) to short (treble, `--treble`)
 and are scaled to fit into the budget.
 
+The natural decay is measured over 2.5 s and re-applied by the player. A
+piano decays faster at the beginning, where the loop is, so the converter
+also removes the remaining level trend inside of the loop: otherwise the
+level would drop during each pass of the loop and jump back at its start,
+which sounds like a vibrato on long notes (`--max-flatten-db` limits the
+correction).
+
 ## Drums and percussion
 
 ```
@@ -69,8 +76,7 @@ file which can be [loaded at runtime](loading.md). An existing header can be
 converted with `tools/header2bin.py src/samples/X.h data/X.bin`, and a binary
 file into a header with `tools/bin2header.py data/X.bin src/samples/X.h
 --like src/samples/Full.h` (source and license are taken from the `--like`
-header). The octave headers (`src/samples/*Octave.h`) were created this way
-from the data files.
+header).
 
 ## Smaller sample sets
 
@@ -114,6 +120,50 @@ python3 tools/files2sfz.py samples/*.wav -o grand.sfz \
 
 Use `--transpose 12` if the note names are an octave too low (e.g. the VCSL
 tenor saxophone) and `--every 2` to use only every second recorded note.
+
+## Sources of the included sample sets
+
+All included sample sets can be rebuilt from the original recordings with
+[tools/build_samples.sh](../tools/build_samples.sh). The script is the exact
+record of how they were made: it downloads the recordings, prepares the SFZ
+mappings and runs the converter for the full, small and octave versions:
+
+```
+tools/build_samples.sh                         # all instruments
+tools/build_samples.sh grand-piano upright-bass
+tools/build_samples.sh -w /data/sources sax    # download directory
+```
+
+It needs python3 with numpy, ffmpeg, curl, 7z, unzip and git. The downloads
+are kept in `~/.cache/tinyinstruments-sources` (or `-w DIR`) and are not
+repeated.
+
+| Instrument (headers) | Original recordings | What is used | License |
+|---|---|---|---|
+| Upright piano (`UprightPianoKW*`) | [FreePats Upright Piano KW](http://freepats.zenvoid.org/Piano/acoustic-grand-piano.html), [UprightPianoKW-SFZ+FLAC-20220221.7z](https://freepats.zenvoid.org/Piano/UprightPianoKW/UprightPianoKW-SFZ+FLAC-20220221.7z) | `UprightPianoKW-20220221.sfz` as it is | CC0 1.0 |
+| Grand piano (`GrandPiano*`) | [VCSL](https://github.com/sgossner/VCSL) `Chordophones/Zithers/Grand Piano, Steinway B/NoSus/` | `JHPiano_NoSus_Close_*`: every second recorded note and the highest one, all velocity layers, round robin 1, first 1.5 MB of each file; SFZ by `files2sfz.py` | CC0 1.0 |
+| Electric piano (`Wurlitzer*`) | [GregSullivan.E-Pianos](https://github.com/sfzinstruments/GregSullivan.E-Pianos) (git) | `Wurlitzer EP200/Wurlitzer EP200.sfz` as it is | CC-BY 3.0 (Greg Sullivan; SFZ mapping by kinwie) |
+| Drum kit (`DrumKit*`) | [Versilian Studios Virtuosity Drums](https://versilian-studios.com/Distro/Virtuosity_Drums_v0.925.zip) v0.925 | `Programs/06-mid-mic.sfz`, General MIDI keys 35-84 | CC0 1.0 |
+| Tenor saxophone (`TenorSax*`) | [VCSL](https://github.com/sgossner/VCSL) `Aerophones/Reed Aerophones/Tenor Saxophone/Non-Vibrato/` | all files (round robin 1), first 0.9 MB of each; SFZ by `files2sfz.py --transpose 12` (the names are an octave too low), keys 36-96 | CC0 1.0 |
+| Clarinet (`Clarinet*`) | [VSCO 2 Community Edition](https://github.com/sgossner/VSCO-2-CE) `Woodwinds/Clarinet/susLong/` | all files (round robin 1), first 1.2 MB of each; SFZ by `files2sfz.py --transpose 12`, keys 48-96 | CC0 1.0 |
+| Electric guitar (`ElectricGuitar*`) | [FreePats Electric Guitar FSBS direct](https://github.com/freepats/electric-guitar-FSBS-direct/releases/download/2022-09-11/EGuitarFSBS-direct-SFZ+FLAC-20220911.7z) 2022-09-11 | `EGuitarFSBS-direct bridge 20220911.sfz` (bridge pickup) | CC0 1.0 |
+| Electric bass (`ElectricBass*`) | [Karoryfer Growlybass](https://github.com/sfzinstruments/karoryfer.growlybass) | `growlybass_clean.sfz`, `sustain/*_p_rr1.wav` and `*_f_rr1.wav` of 14 notes (db2 - eb5), transposed one octave down, keys 30-80 | CC0 1.0 |
+| Upright bass (`UprightBass*`) | [Karoryfer Meatbass](https://github.com/sfzinstruments/karoryfer.meatbass) (1958 Otto Rubner double bass) | `Programs/pizz_basic.sfz` (pizzicato) with the samples it uses; `c4_vl4_rr1` (wrong pitch) replaced by `c4_vl3_rr1` (`pizz_tinyinstruments.sfz`), keys 12-71 | CC0 1.0 |
+
+Converter settings (all with `--license`, see the script for the exact
+commands):
+
+| Instrument | Full (700 KB, 32 kHz) | Small (250 KB, 22.05 kHz) | Octave (150 KB, 22.05 kHz, `--step 12`) |
+|---|---|---|---|
+| Upright piano, grand piano | `--mode keyboard` | + `--single-layer` | + `--single-layer` |
+| Electric piano | default | `--single-layer` | `--single-layer` |
+| Drum kit | `--mode natural --keys 35-84 --choke 46:42,44 --normalize-layers --max-layers 2` | `--single-layer` instead of `--max-layers 2` | - |
+| Saxophone, clarinet | `--mode sustain --loop-fraction 0.65 --normalize-layers --tune-correct --pitch-marks` | + `--single-layer` | + `--single-layer` |
+| Electric guitar | `--mode keyboard --bass 2.0 --treble 0.9 --normalize-layers --tune-correct` | + `--single-layer` | + `--single-layer` |
+| Electric bass | `--mode keyboard --keys 30-80 --transpose -12 --bass 2.2 --treble 1.2 --normalize-layers --tune-correct --pitch-marks --layer-index 1,2` | `--layer-index 2` | `--layer-index 2` |
+| Upright bass | `--keys 12-71 --pitch-marks --tune-correct --max-layers 2` | `--single-layer` instead of `--max-layers 2` | `--single-layer` |
+
+The tonewheel organ is synthesized and has no sample data.
 
 ## Tips
 

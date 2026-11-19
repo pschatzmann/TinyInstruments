@@ -244,6 +244,16 @@ def smooth_decays(regions, decays):
     return result
 
 
+def loop_slope(y, rate, loop_start, loop_end):
+    """Level trend inside of the loop in dB per second (linear regression of
+    the 10 ms levels); 0 if the loop is too short to measure it."""
+    if loop_end - loop_start < int(0.08 * rate):
+        return 0.0
+    db, _ = rms_db(y[loop_start:loop_end], rate)
+    t = np.arange(len(db)) * 0.01
+    return float(np.polyfit(t, db, 1)[0])
+
+
 def process_zone(x, rate, length, loop_fraction, xfade_s, max_flatten_db, decay_db):
     """Returns (pcm float, loop_start, loop_end, decay_start, decay_db_per_s, ncc)."""
     approx_start = loop_region(length, rate, loop_fraction)
@@ -256,6 +266,15 @@ def process_zone(x, rate, length, loop_fraction, xfade_s, max_flatten_db, decay_
     n = np.arange(length - loop_start)
     gain_db = np.minimum(-decay_db * n / rate, max_flatten_db)
     y[loop_start:] *= 10 ** (gain_db / 20.0)
+
+    # the decay is measured over a long time (and smoothed between the keys),
+    # but e.g. a piano decays faster at the beginning, where the loop is: the
+    # rest of the decay inside of the loop would restart with each repetition
+    # (a periodic level step which sounds like a vibrato). Remove it as well.
+    residual = loop_slope(y, rate, loop_start, loop_end)
+    if residual != 0.0:
+        corr_db = np.clip(-residual * n / rate, -max_flatten_db, max_flatten_db)
+        y[loop_start:] *= 10 ** (corr_db / 20.0)
 
     # crossfade the end of the loop into the signal preceding the loop start:
     # the less correlated, the longer the crossfade and the more equal power

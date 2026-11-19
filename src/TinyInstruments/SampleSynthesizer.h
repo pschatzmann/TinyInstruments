@@ -550,7 +550,7 @@ class SampleSynthesizer {
       return;
     }
     switch (controller) {
-      case 1:  // modulation wheel: vibrato depth
+      case 1:  // modulation wheel: vibrato depth (0 for the pianos and drums)
         cs.modulation = value / 127.0f;
         for (int j = 0; j < VOICE_COUNT; j++) {
           SamplerVoice& v = voices[j];

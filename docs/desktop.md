@@ -100,7 +100,9 @@ Stop the player with Ctrl+C.
 | `--thru` | forward all messages unchanged, also system exclusive, clock and active sensing (default: they are ignored), see [MIDI thru](#midi-thru-copy-an-input-to-an-output) |
 
 All midi controllers of the instruments work as on the microcontroller, e.g.
-the sustain pedal, the modulation wheel (vibrato) or CC19 to switch the amp
+the sustain pedal, the modulation wheel (vibrato of the wind and string
+instruments, tremolo depth of the electric piano, speed of the organ's rotary
+speaker, no effect on the piano) or CC19 to switch the amp
 preset (see [Instruments](instruments.md) and [Electric Guitar](guitar.md)).
 
 ## Forwarding midi to a microcontroller
