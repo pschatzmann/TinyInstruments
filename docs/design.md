@@ -124,8 +124,9 @@ decoding from the beginning. The data is a single continuous stream per zone
 The audio is rendered in blocks of `TI_BLOCK_SIZE` (64) frames. Per block a
 voice calculates:
 
-- the pitch: `step = zoneRate / outputRate * 2^((note - root + tune/100) / 12)
-  * pitchBend * vibrato` (the vibrato lfo is slow, so once per block is enough)
+- the pitch:
+  `step = zoneRate / outputRate * 2^((note - root + tune/100) / 12) * pitchBend * vibrato`
+  (the vibrato lfo is slow, so once per block is enough)
 - the amplitude at the start and the end of the block: velocity gain, channel
   gain (CC7 x CC11 x CC2, smoothed), attack, decay and release envelopes
 

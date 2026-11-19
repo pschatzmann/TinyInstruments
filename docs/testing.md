@@ -72,7 +72,7 @@ are provided by the libraries and, for the hardware of material-gui, by
 |---|---|---|
 | `I2SStream` | sound card (miniaudio) | [TinyInstrumentsAudioTools.h](../src/TinyInstrumentsAudioTools.h) |
 | `I2SCodecStream` | sound card (miniaudio), the board is ignored | arduino-audio-tools |
-| `Serial`, `Serial2` (serial midi) | stdout / stdin: e.g. `printf '\x90\x3c\x64' \| ./build-examples/examples/piano-serial-midi` | Arduino-Emulator |
+| `Serial`, `Serial2` (serial midi) | stdout / stdin (see the example below) | Arduino-Emulator |
 | `LittleFS` | the `data` folder of this library (environment variable `LITTLEFS_ROOT`) | Arduino-Emulator |
 | `WiFi`, TCP, UDP | the network of the computer | Arduino-Emulator |
 | `ESP.getFreeHeap()` ... | memory of the computer, no PSRAM | Arduino-Emulator |
@@ -81,6 +81,12 @@ are provided by the libraries and, for the hardware of material-gui, by
 | display board `LCDBoardESP32S3_2_8Display` | SDL window (240x320), mouse as touch | [DesktopBoards.h](../desktop/emulator/DesktopBoards.h) |
 | audio board `ESP32S3HosyondDisplay` | placeholder: arduino-audio-driver is not used on the desktop | [AudioBoards/ESP32S3HosyondDisplay.h](../desktop/emulator/AudioBoards/ESP32S3HosyondDisplay.h) |
 | `MidiUsbHost`, `MidiUsbDevice` (USB midi) | the first midi device of the computer, e.g. a USB midi keyboard (ALSA raw midi) | arduino-midi |
+
+Serial midi on the desktop, e.g. a note on for C4:
+
+```
+printf '\x90\x3c\x64' | ./build-examples/examples/piano-serial-midi
+```
 
 To play material-gui with a USB midi keyboard, connect the keyboard to the
 computer and switch on the "USB" midi input on the Setup page;
