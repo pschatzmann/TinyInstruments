@@ -1,0 +1,19 @@
+var searchData=
+[
+  ['name_0',['name',['../classtinyinstruments_1_1DynamicSampleSet.html#acb3889a5a098fd36cae104713dc3a735',1,'tinyinstruments::DynamicSampleSet::name'],['../structtinyinstruments_1_1SampleSet.html#abad7f8e04c453fec09a30a3a659320d4',1,'tinyinstruments::SampleSet::name']]],
+  ['next_1',['next',['../classtinyinstruments_1_1ImaAdpcmDecoder.html#a1da16990cc5507b4752ebd2ba3e45afd',1,'tinyinstruments::ImaAdpcmDecoder::next()'],['../classtinyinstruments_1_1OrganSource.html#a4cc5a0d7240ec779ca5702ec7cbff7ca',1,'tinyinstruments::OrganSource::next()'],['../classtinyinstruments_1_1PsolaSource.html#ae96c57753afa479d6d371f47c81cd601',1,'tinyinstruments::PsolaSource::next()']]],
+  ['next_5fmark_2',['next_mark',['../classtinyinstruments_1_1PsolaSource.html#ad3bda5f0e12ccf72ac3e250160661a37',1,'tinyinstruments::PsolaSource']]],
+  ['next_5fmark_5fu_3',['next_mark_u',['../classtinyinstruments_1_1PsolaSource.html#ac8de629d516c7444dfef47ce590c98c6',1,'tinyinstruments::PsolaSource']]],
+  ['next_5fstart_4',['next_start',['../classtinyinstruments_1_1PsolaSource.html#a303f99327e9a9323958fc90a11ebec20',1,'tinyinstruments::PsolaSource']]],
+  ['next_5fsyn_5',['next_syn',['../classtinyinstruments_1_1PsolaSource.html#a9874d2c8976f2b23cd8c39779c765a01',1,'tinyinstruments::PsolaSource']]],
+  ['nextrandom_6',['nextRandom',['../classtinyinstruments_1_1OrganSource.html#a22c96d74925950aa9224a8aa628cfa96',1,'tinyinstruments::OrganSource']]],
+  ['nextsample_7',['nextSample',['../classtinyinstruments_1_1SamplerVoice.html#aee4163364fd25e31afb27c04fbc2175b',1,'tinyinstruments::SamplerVoice']]],
+  ['normalize_8',['normalize',['../structtinyinstruments_1_1RotarySpeaker_1_1Rotor.html#a9dd020f405db43f8b464c6a2bbf24d93',1,'tinyinstruments::RotarySpeaker::Rotor']]],
+  ['note_9',['note',['../classtinyinstruments_1_1SamplerVoice.html#a7224c3c7b925f49ac01d4eb34b462fb6',1,'tinyinstruments::SamplerVoice']]],
+  ['note_5fcounter_10',['note_counter',['../classtinyinstruments_1_1SampleSynthesizer.html#aec33e38c993972bb6f7ae8ce59257002',1,'tinyinstruments::SampleSynthesizer']]],
+  ['noteoff_11',['NoteOff',['../structtinyinstruments_1_1SynthEvent.html#a984e9cc2cbc5b6836b17d05a9ff3c62caf90240c6410f1dfc668a05cc1c121b80',1,'tinyinstruments::SynthEvent']]],
+  ['noteoff_12',['noteOff',['../classtinyinstruments_1_1SampleSynthesizer.html#a7f78d600dd2525560c62e80a684fbc58',1,'tinyinstruments::SampleSynthesizer']]],
+  ['noteon_13',['NoteOn',['../structtinyinstruments_1_1SynthEvent.html#a984e9cc2cbc5b6836b17d05a9ff3c62ca9a9506a3a44e09276be21295c0192c43',1,'tinyinstruments::SynthEvent']]],
+  ['noteon_14',['noteOn',['../classtinyinstruments_1_1SampleSynthesizer.html#ad451cbe9d7e240c966e56351d07861cc',1,'tinyinstruments::SampleSynthesizer']]],
+  ['notes_15',['Notes',['../md_docs_2bass.html#autotoc_md6',1,'Notes'],['../md_docs_2clarinet.html#autotoc_md13',1,'Notes']]]
+];

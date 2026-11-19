@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['gain_0',['gain',['../classtinyinstruments_1_1SamplerVoice.html#aedc389f0bf8e32b7ecc6a56ded6e939d',1,'tinyinstruments::SamplerVoice::gain'],['../classtinyinstruments_1_1TonewheelOrgan.html#a8302900e88427aac2f25f5ef23090229',1,'tinyinstruments::TonewheelOrgan::gain()'],['../classtinyinstruments_1_1TremoloEffect.html#a838aba4ef37c16f9583f4016ec56fc76',1,'tinyinstruments::TremoloEffect::gain()']]],
+  ['gains_1',['gains',['../classtinyinstruments_1_1OrganSource.html#a7dbe65f27d353f9ca79d28f02032e8a8',1,'tinyinstruments::OrganSource']]],
+  ['generalmidibank_2',['GeneralMidiBank',['../classtinyinstruments_1_1GeneralMidiBank.html',1,'tinyinstruments::GeneralMidiBank'],['../classtinyinstruments_1_1GeneralMidiBank.html#a29a7b0816f811c0db8832ebb32531d7f',1,'tinyinstruments::GeneralMidiBank::GeneralMidiBank()=default'],['../classtinyinstruments_1_1GeneralMidiBank.html#ac8ce31f6ecb2cf54d6af6af0738e92a2',1,'tinyinstruments::GeneralMidiBank::GeneralMidiBank(const GeneralMidiBank &amp;)=delete']]],
+  ['generalmidibank_2eh_3',['GeneralMidiBank.h',['../GeneralMidiBank_8h.html',1,'']]],
+  ['getdepth_4',['getDepth',['../classtinyinstruments_1_1TremoloEffect.html#aa08b015e8fb85423daf52babd01030d1',1,'tinyinstruments::TremoloEffect']]],
+  ['getdrive_5',['getDrive',['../classtinyinstruments_1_1RotarySpeaker.html#ab309030031761ccd0608a1c27cfa6902',1,'tinyinstruments::RotarySpeaker']]],
+  ['getsettings_6',['getSettings',['../classtinyinstruments_1_1GuitarAmp.html#ad2c377e2cb50dfb7c4939894834eb840',1,'tinyinstruments::GuitarAmp']]],
+  ['getstate_7',['getState',['../classtinyinstruments_1_1SamplerVoice.html#a8528af9e055b5c021aafa9c42cba07a4',1,'tinyinstruments::SamplerVoice']]],
+  ['getting_20started_8',['Getting Started',['../md_docs_2getting-started.html',1,'']]],
+  ['getting_2dstarted_2emd_9',['getting-started.md',['../getting-started_8md.html',1,'']]],
+  ['goals_10',['Goals',['../md_docs_2design.html#autotoc_md17',1,'']]],
+  ['grain_11',['Grain',['../structtinyinstruments_1_1PsolaSource_1_1Grain.html',1,'tinyinstruments::PsolaSource']]],
+  ['grain_5fcount_12',['grain_count',['../classtinyinstruments_1_1PsolaSource.html#aca78c11a6e13056a124192d63aeab124',1,'tinyinstruments::PsolaSource']]],
+  ['grains_13',['grains',['../classtinyinstruments_1_1PsolaSource.html#a3d1df9c455d601ced826b3b0002f4c34',1,'tinyinstruments::PsolaSource']]],
+  ['group_14',['group',['../structtinyinstruments_1_1SampleZone.html#aff6027a5545346f4d560e38167759a61',1,'tinyinstruments::SampleZone']]],
+  ['guitar_15',['Electric Guitar',['../md_docs_2guitar.html',1,'']]],
+  ['guitar_16',['guitar',['../structtinyinstruments_1_1GeneralMidiBank_1_1SampleSets.html#af9550512922eb9ae7541eb9e83b637d5',1,'tinyinstruments::GeneralMidiBank::SampleSets']]],
+  ['guitar_20amplifier_17',['Guitar amplifier',['../md_docs_2performance.html#autotoc_md87',1,'']]],
+  ['guitar_2emd_18',['guitar.md',['../guitar_8md.html',1,'']]],
+  ['guitar_5f_19',['guitar_',['../classtinyinstruments_1_1GeneralMidiBank.html#a841f66356de9b5ef25744430ad297df4',1,'tinyinstruments::GeneralMidiBank']]],
+  ['guitaramp_20',['GuitarAmp',['../classtinyinstruments_1_1GuitarAmp.html',1,'tinyinstruments::GuitarAmp'],['../classtinyinstruments_1_1GuitarAmp.html#ade8ad9f9140b8c0a9f9423fd753eec84',1,'tinyinstruments::GuitarAmp::GuitarAmp()'],['../md_docs_2guitar.html#autotoc_md57',1,'GuitarAmp']]],
+  ['guitaramp_2eh_21',['GuitarAmp.h',['../GuitarAmp_8h.html',1,'']]],
+  ['guitarinstrument_22',['GuitarInstrument',['../namespacetinyinstruments.html#a9ca94bf683b3eca6c71dd5357961a1a2',1,'tinyinstruments']]]
+];

@@ -1,0 +1,24 @@
+var searchData=
+[
+  ['s_0',['s',['../structtinyinstruments_1_1RotarySpeaker_1_1Rotor.html#a182a144a855d841a6b4f3779c889fd15',1,'tinyinstruments::RotarySpeaker::Rotor']]],
+  ['sample_5frate_1',['sample_rate',['../classtinyinstruments_1_1SampleSynthesizer.html#aaef16747193e49df7ac30b0660e23040',1,'tinyinstruments::SampleSynthesizer::sample_rate'],['../classtinyinstruments_1_1TremoloEffect.html#a2bd745673b3910625d29fcc4cbba23a9',1,'tinyinstruments::TremoloEffect::sample_rate']]],
+  ['samplerate_2',['sampleRate',['../structtinyinstruments_1_1SampleSet.html#a6dfab23c6fae56c76c73a5a29b37aea2',1,'tinyinstruments::SampleSet']]],
+  ['samples_3',['samples',['../structtinyinstruments_1_1Instrument.html#ae46195690a38739837c9408a83a1f2eb',1,'tinyinstruments::Instrument']]],
+  ['sax_5f_4',['sax_',['../classtinyinstruments_1_1GeneralMidiBank.html#a205b7e1b5fdd2085e19c639a72ced3a0',1,'tinyinstruments::GeneralMidiBank']]],
+  ['saxophone_5',['saxophone',['../structtinyinstruments_1_1GeneralMidiBank_1_1SampleSets.html#a0c4c87a4e73f6a456280deff39eb23e3',1,'tinyinstruments::GeneralMidiBank::SampleSets']]],
+  ['set_6',['set',['../classtinyinstruments_1_1DynamicSampleSet.html#a4f36164b5f74328772569cc2ee3a8b6e',1,'tinyinstruments::DynamicSampleSet']]],
+  ['settings_7',['settings',['../classtinyinstruments_1_1GuitarAmp.html#a7420d18ee348547ecb7c27facc2dbc30',1,'tinyinstruments::GuitarAmp']]],
+  ['silent_5f_8',['silent_',['../classtinyinstruments_1_1GeneralMidiBank.html#ab5a3e586205892db28f5cf55e4fb5220',1,'tinyinstruments::GeneralMidiBank']]],
+  ['size_9',['SIZE',['../classtinyinstruments_1_1RotarySpeaker.html#af7f630bab5b9ff66399a4d348c28d5ef',1,'tinyinstruments::RotarySpeaker']]],
+  ['slow_10',['slow',['../structtinyinstruments_1_1RotarySpeaker_1_1Rotor.html#a10364186bf8433bd7481adec43cfabfd',1,'tinyinstruments::RotarySpeaker::Rotor']]],
+  ['sr_11',['sr',['../structtinyinstruments_1_1RotarySpeaker_1_1Rotor.html#a4b88f7f6f0215f6cfc6948e18ac9e509',1,'tinyinstruments::RotarySpeaker::Rotor']]],
+  ['state_12',['state',['../classtinyinstruments_1_1SamplerVoice.html#af40149134e94b2a6ae4df8ddcfea1656',1,'tinyinstruments::SamplerVoice']]],
+  ['steal_5ffade_13',['steal_fade',['../classtinyinstruments_1_1SampleSynthesizer.html#ac20329fb6972a55b20e99b01de21d7e5',1,'tinyinstruments::SampleSynthesizer']]],
+  ['step_14',['step',['../classtinyinstruments_1_1SamplerVoice.html#acc98ce6f9bd2f4232c700a5ea06a6b4a',1,'tinyinstruments::SamplerVoice']]],
+  ['step_5findex_15',['step_index',['../classtinyinstruments_1_1ImaAdpcmDecoder.html#a1c0aa20d322462c9e7429db0098003d8',1,'tinyinstruments::ImaAdpcmDecoder']]],
+  ['steps_16',['steps',['../classtinyinstruments_1_1OrganSource.html#a521a7c075d6bab3245ff7909e11866ea',1,'tinyinstruments::OrganSource']]],
+  ['stereo_17',['stereo',['../classtinyinstruments_1_1TremoloEffect.html#a5e1933d2a8060882b39efd5eb55ced6e',1,'tinyinstruments::TremoloEffect']]],
+  ['stereowidth_18',['stereoWidth',['../structtinyinstruments_1_1Instrument.html#a0f675fe1d1a9a4a57689edf3595133b2',1,'tinyinstruments::Instrument']]],
+  ['sustain_19',['sustain',['../structtinyinstruments_1_1SampleSynthesizer_1_1ChannelState.html#a9a8c393f34b3ec9a8c1f9446c6399840',1,'tinyinstruments::SampleSynthesizer::ChannelState']]],
+  ['sustained_20',['sustained',['../classtinyinstruments_1_1SamplerVoice.html#a877db06759dc2aafb7e6f6d016472f20',1,'tinyinstruments::SamplerVoice']]]
+];
