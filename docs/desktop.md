@@ -90,6 +90,7 @@ Stop the player with Ctrl+C.
 | `--channel N` | midi channel 1..16 of the instrument (default: all, drums: 10) |
 | `--drums` | also play the drum kit on midi channel 10 |
 | `--volume V` | master volume (default: 0.5) |
+| `--map-cc FROM:TO` | map a received controller to another one, e.g. `91:7` (a knob which sends CC91 changes the volume) or `91:off` (ignored); repeatable. Only for the sound of the player: forwarded messages are not changed |
 | `--rate N` | sample rate (default: 44100) |
 | `--buffer N` | audio buffer in frames (default: 256 = 5.8 ms) |
 | `--wav FILE` | record to a wav file instead of playing on the sound card |

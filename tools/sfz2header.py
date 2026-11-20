@@ -254,7 +254,29 @@ def loop_slope(y, rate, loop_start, loop_end):
     return float(np.polyfit(t, db, 1)[0])
 
 
-def process_zone(x, rate, length, loop_fraction, xfade_s, max_flatten_db, decay_db):
+def flatten_loop_envelope(y, rate, loop_start, loop_end, root, max_db=12.0):
+    """Removes the level fluctuations inside of the loop (e.g. the beating of
+    the strings of a piano): repeated with the loop they would become a
+    periodic warble. The waveform is kept, only the envelope (measured over at
+    least 3 periods) is made constant, at the level of the loop start, so the
+    loop still continues the preceding signal."""
+    f0 = 440.0 * 2 ** ((root - 69) / 12.0)
+    w = max(int(0.02 * rate), int(3 * rate / f0))
+    seg = y[loop_start:loop_end]
+    if len(seg) < 4 * w:
+        return
+    kernel = np.ones(w) / w
+    # mirrored at the ends: no level drop at the borders of the loop
+    env = np.sqrt(np.convolve(np.pad(seg * seg, w, mode="reflect"), kernel, mode="same")[w:-w]) + 1e-9
+    target = env[w // 2]
+    gain = np.clip(target / env, 10 ** (-max_db / 20), 10 ** (max_db / 20))
+    gain = np.convolve(np.pad(gain, w, mode="edge"), kernel, mode="same")[w:-w]
+    gain *= 1.0 / gain[0]  # no step at the loop start
+    y[loop_start:loop_end] = seg * gain
+
+
+def process_zone(x, rate, length, loop_fraction, xfade_s, max_flatten_db, decay_db,
+                 root=60, flat_envelope=False):
     """Returns (pcm float, loop_start, loop_end, decay_start, decay_db_per_s, ncc)."""
     approx_start = loop_region(length, rate, loop_fraction)
     y = x[:length].copy()
@@ -275,6 +297,8 @@ def process_zone(x, rate, length, loop_fraction, xfade_s, max_flatten_db, decay_
     if residual != 0.0:
         corr_db = np.clip(-residual * n / rate, -max_flatten_db, max_flatten_db)
         y[loop_start:] *= 10 ** (corr_db / 20.0)
+    if flat_envelope:
+        flatten_loop_envelope(y, rate, loop_start, loop_end, root)
 
     # crossfade the end of the loop into the signal preceding the loop start:
     # the less correlated, the longer the crossfade and the more equal power
@@ -763,6 +787,9 @@ def main():
     p.add_argument("--loop-fraction", type=float, default=0.4)
     p.add_argument("--xfade", type=float, default=0.03, help="loop crossfade in seconds")
     p.add_argument("--max-flatten-db", type=float, default=18.0)
+    p.add_argument("--natural-loop-envelope", action="store_true",
+                   help="keyboard mode: keep the level fluctuations (e.g. beating) inside of "
+                        "the loop (default: they are removed, they would become a periodic warble)")
     p.add_argument("--license", default="", help="license note written into the header")
     p.add_argument("--wav-dir", help="write the decoded result of each zone as wav for listening")
     p.add_argument("--mode", choices=["keyboard", "natural", "sustain"], default="keyboard",
@@ -898,7 +925,8 @@ def main():
             ls, le, ds, decay_db, ncc = 0, 0, length, 0.0, 1.0
         else:
             y, ls, le, ds, decay_db, ncc = process_zone(
-                x, args.rate, length, args.loop_fraction, args.xfade, args.max_flatten_db, decay)
+                x, args.rate, length, args.loop_fraction, args.xfade, args.max_flatten_db, decay,
+                root=r["root"], flat_envelope=args.mode == "keyboard" and not args.natural_loop_envelope)
         peak = max(peak, float(np.max(np.abs(y))))
         processed.append((r, y, ls, le, ds, decay_db, ncc))
 

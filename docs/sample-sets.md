@@ -15,12 +15,20 @@ python3 tools/sfz2header.py MyPiano.sfz --name MyPiano --budget 700000 \
 The zone lengths go from long (bass, `--bass`) to short (treble, `--treble`)
 and are scaled to fit into the budget.
 
-The natural decay is measured over 2.5 s and re-applied by the player. A
-piano decays faster at the beginning, where the loop is, so the converter
-also removes the remaining level trend inside of the loop: otherwise the
-level would drop during each pass of the loop and jump back at its start,
-which sounds like a vibrato on long notes (`--max-flatten-db` limits the
-correction).
+The natural decay is measured over 2.5 s and re-applied by the player. Inside
+of the loop the level is made constant, otherwise the repetition of the loop
+turns it into a periodic modulation on long notes:
+
+- a piano decays faster at the beginning, where the loop is: the rest of the
+  decay inside of the loop would drop during each pass and jump back at its
+  start, which sounds like a vibrato (`--max-flatten-db` limits the
+  correction)
+- the beating of the strings inside of a short loop (high notes) would
+  become a ringing warble. The envelope of the loop (measured over at least 3
+  periods) is flattened, the waveform is kept; the attack before the loop
+  keeps its natural beating. `--natural-loop-envelope` keeps the fluctuations
+  (only `--mode keyboard` flattens the envelope: the long loops of
+  `--mode sustain` keep the natural fluctuations of the tone)
 
 ## Drums and percussion
 

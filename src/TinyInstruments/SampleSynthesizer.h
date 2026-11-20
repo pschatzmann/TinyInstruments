@@ -23,7 +23,8 @@ namespace tinyinstruments {
  * Supported: note on/off, modulation wheel (CC1: vibrato), breath controller
  * (CC2), volume (CC7), expression (CC11), sustain pedal (CC64), all sound off
  * (CC120), reset all controllers (CC121), all notes off (CC123) and pitch
- * bend (+/- 2 semitones by default).
+ * bend (+/- 2 semitones by default). Received controllers can be mapped to
+ * other ones with mapController(), e.g. a knob which sends CC91 to the volume.
  *
  * Polyphony: max maxNotes (default TI_MAX_VOICES = 10) notes sound at the
  * same time, and max Instrument::maxNotes per channel. If another note is
@@ -34,7 +35,10 @@ namespace tinyinstruments {
  */
 class SampleSynthesizer {
  public:
-  SampleSynthesizer() { resetControllers(); }
+  SampleSynthesizer() {
+    resetControllers();
+    for (int j = 0; j < 128; j++) cc_map[j] = (uint8_t)j;
+  }
 
   /// Defines the instrument for a midi channel (0..15) or all channels (-1)
   void setInstrument(int channel, const Instrument& instrument) {
@@ -100,8 +104,25 @@ class SampleSynthesizer {
   }
 
   bool controlChange(uint8_t channel, uint8_t controller, uint8_t value) {
+    controller = cc_map[controller & 0x7F];
+    if (controller == CC_IGNORE) return true;
     return push(SynthEvent::ControlChange, channel, controller, value);
   }
+
+  /// Value for mapController(): the controller is ignored
+  static constexpr uint8_t CC_IGNORE = 0xFF;
+
+  /// Maps a received midi controller to another one, e.g.
+  /// mapController(91, 7): a knob which sends CC91 (reverb level in General
+  /// MIDI) changes the volume of the channel (CC7). CC_IGNORE ignores the
+  /// controller, mapController(n, n) removes the mapping. Define the mappings
+  /// in setup(): they are applied when the messages are received.
+  void mapController(uint8_t from, uint8_t to) {
+    cc_map[from & 0x7F] = to == CC_IGNORE ? CC_IGNORE : (uint8_t)(to & 0x7F);
+  }
+
+  /// The controller to which a received controller is mapped (CC_IGNORE: ignored)
+  uint8_t controllerMapping(uint8_t from) const { return cc_map[from & 0x7F]; }
 
   /// Pitch bend: 0..16383, center is 8192
   bool pitchBend(uint8_t channel, uint16_t value) {
@@ -122,7 +143,8 @@ class SampleSynthesizer {
 
   /// Stops all notes on all channels (with release)
   void allNotesOff() {
-    for (int ch = 0; ch < TI_MIDI_CHANNELS; ch++) controlChange(ch, 123, 0);
+    // not with controlChange(): the controller mapping does not apply
+    for (int ch = 0; ch < TI_MIDI_CHANNELS; ch++) push(SynthEvent::ControlChange, ch, 123, 0);
   }
 
   // ---- audio output ----
@@ -217,6 +239,7 @@ class SampleSynthesizer {
   uint32_t note_counter = 0;
   float master = 0.5f;
   float bend_range = 2.0f;
+  uint8_t cc_map[128];  // mapping of the received controllers
   const InstrumentBank* p_bank = nullptr;
 
   /// Selects the instrument and effect of the channel: sounding notes

@@ -73,6 +73,7 @@ struct Options {
   bool loop = false;              // repeat the midi file
   bool gm = false;                // General MIDI instruments (program changes)
   bool thru = false;              // forward all message types (sysex, clock...)
+  std::vector<std::pair<int, int>> cc_map;  // --map-cc FROM:TO (TO -1: ignore)
   bool instrument_selected = false;  // --instrument or --file was given
   bool audio = true;
   int channel = 0;  // 1..16, 0 = all
@@ -116,6 +117,8 @@ static void usage() {
       "  --channel N            midi channel 1..16 of the instrument (default: all)\n"
       "  --drums                also play the drum kit on midi channel 10\n"
       "  --volume V             master volume 0..2 (default: 0.5)\n"
+      "  --map-cc FROM:TO       map a received controller to another one (repeatable),\n"
+      "                         e.g. 91:7 (a knob with CC91 changes the volume), 91:off\n"
       "  --rate N               sample rate (default: 44100)\n"
       "  --buffer N             audio buffer in frames (default: 256)\n"
       "  --wav FILE             write the output to a wav file instead of the sound card\n"
@@ -164,6 +167,19 @@ static bool parseArgs(int argc, char** argv, Options& opt) {
     else if (a == "--channel") opt.channel = atoi(next().c_str());
     else if (a == "--drums") opt.drums = true;
     else if (a == "--volume") opt.volume = atof(next().c_str());
+    else if (a == "--map-cc") {
+      std::string v = next();
+      size_t colon = v.find(':');
+      int from = colon == std::string::npos ? -1 : atoi(v.substr(0, colon).c_str());
+      std::string to_text = colon == std::string::npos ? "" : v.substr(colon + 1);
+      int to = to_text == "off" ? -1 : (to_text.empty() ? -2 : atoi(to_text.c_str()));
+      if (from < 0 || from > 127 || to < -1 || to > 127 ||
+          to_text.find_first_not_of("0123456789") != std::string::npos && to_text != "off") {
+        fprintf(stderr, "invalid --map-cc %s: use FROM:TO, e.g. 91:7 or 91:off\n", v.c_str());
+        exit(1);
+      }
+      opt.cc_map.push_back({from, to});
+    }
     else if (a == "--rate") opt.rate = atoi(next().c_str());
     else if (a == "--buffer") opt.buffer = atoi(next().c_str());
     else if (a == "--wav") opt.wav = next();
@@ -510,6 +526,11 @@ int main(int argc, char** argv) {
   TremoloEffect tremolo(5.5f, tremolo_depth);
   if (tremolo_depth > 0 && !opt.gm) synth.setEffect(channel, &tremolo);
   synth.setVolume(opt.volume);
+  for (auto& m : opt.cc_map) {
+    synth.mapController(m.first, m.second < 0 ? SampleSynthesizer::CC_IGNORE : m.second);
+    if (m.second < 0) printf("controller %d: ignored\n", m.first);
+    else printf("controller %d -> %d\n", m.first, m.second);
+  }
   synth.begin(opt.rate);
   if (opt.gm)
     printf("instruments: General MIDI (program changes), drums on channel 10\n");

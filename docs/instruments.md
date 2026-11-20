@@ -166,6 +166,19 @@ done by resampling (small changes).
 | CC7 volume, CC11 expression | volume of the channel (smoothed) |
 | CC64 sustain pedal | holds the notes |
 | CC120, CC121, CC123 | all sound off, reset controllers, all notes off |
+
+Controllers which the keyboard sends for something else can be mapped, e.g.
+a knob which sends CC91 (`B6 5B 00`-`7F`: reverb level in General MIDI, on
+channel 7) to the volume of the channel:
+
+```cpp
+synth.mapController(91, 7);                              // CC91 -> volume (CC7)
+synth.mapController(1, SampleSynthesizer::CC_IGNORE);    // ignore the modulation wheel
+synth.mapController(91, 91);                             // remove the mapping
+```
+
+The mapping is applied when the messages are received (also to the
+controllers of the effects, e.g. CC1 of the tremolo). Define it in `setup()`.
 | program change | selects the instrument of the channel from the `InstrumentBank` |
 
 ## Program changes

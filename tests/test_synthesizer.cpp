@@ -272,6 +272,43 @@ static void testVolumeAndPitchBend() {
   CHECK_NEAR(estimateFrequency(out, 44100, 200, 1000), 400.0, 1.0);
 }
 
+// B6 5B xx: CC91 on midi channel 7 mapped to the volume (CC7)
+static void testControllerMapping() {
+  Instrument inst(sineSet);
+  SampleSynthesizer synth;
+  synth.setInstrument(-1, inst);
+  synth.begin(44100);
+  synth.noteOn(6, 67, 127);
+  double normal = rms(renderLeft(synth, 4410));
+  // without mapping CC91 has no effect
+  synth.controlChange(6, 91, 0);
+  renderLeft(synth, 2205);
+  CHECK_NEAR(rms(renderLeft(synth, 4410)) / normal, 1.0, 0.02);
+  synth.mapController(91, 7);
+  CHECK(synth.controllerMapping(91) == 7);
+  synth.controlChange(6, 91, 50);
+  renderLeft(synth, 2205);  // volume changes are smoothed
+  CHECK_NEAR(rms(renderLeft(synth, 4410)) / normal, 50.0 / 100.0, 0.05);
+  synth.controlChange(6, 91, 0x7F);
+  renderLeft(synth, 2205);
+  CHECK_NEAR(rms(renderLeft(synth, 4410)) / normal, 127.0 / 100.0, 0.05);
+  // the volume of the other channels is not changed
+  synth.noteOn(0, 67, 127);
+  renderLeft(synth, 2205);
+  // ignored controller: no effect
+  synth.mapController(7, SampleSynthesizer::CC_IGNORE);
+  synth.mapController(91, 91);
+  double before = rms(renderLeft(synth, 4410));
+  synth.controlChange(6, 7, 0);
+  renderLeft(synth, 2205);
+  CHECK_NEAR(rms(renderLeft(synth, 4410)) / before, 1.0, 0.02);
+  // allNotesOff() is not affected by the mapping
+  synth.mapController(123, SampleSynthesizer::CC_IGNORE);
+  synth.allNotesOff();
+  renderLeft(synth, 44100);
+  CHECK(synth.activeVoices() == 0);
+}
+
 static void testInt16Output() {
   Instrument inst(sineSet);
   SampleSynthesizer synth;
@@ -472,6 +509,7 @@ int main() {
   testStealingDoesNotClick();
   testChannels();
   testVolumeAndPitchBend();
+  testControllerMapping();
   testInt16Output();
   testEventQueueOverflow();
   testDrumsExactKeysAndNoteOff();
