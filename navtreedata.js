@@ -194,9 +194,9 @@ var NAVTREEINDEX =
 "Biquad_8h.html",
 "classtinyinstruments_1_1GuitarAmp.html#a45ad9876d0cc4c27c7c0afc266569b6b",
 "classtinyinstruments_1_1PsolaSource.html#ae96c57753afa479d6d371f47c81cd601",
-"classtinyinstruments_1_1SamplerVoice.html#a365a963ee22d391137dbdb213e0be4c8",
-"functions_eval.html",
-"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#ae4429b27ca20044870232a6f9772c32e"
+"classtinyinstruments_1_1SamplerVoice.html#a2bbcc4c63e060c23d4b5359eb55286e0",
+"files.html",
+"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#a92f2b6c1eb35bf0303d12d616735a78c"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

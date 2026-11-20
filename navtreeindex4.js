@@ -1,5 +1,13 @@
 var NAVTREEINDEX4 =
 {
+"files.html":[24,0],
+"functions.html":[23,3,0],
+"functions.html":[23,3,0,0],
+"functions_b.html":[23,3,0,1],
+"functions_c.html":[23,3,0,2],
+"functions_d.html":[23,3,0,3],
+"functions_e.html":[23,3,0,4],
+"functions_enum.html":[23,3,3],
 "functions_eval.html":[23,3,4],
 "functions_f.html":[23,3,0,5],
 "functions_func.html":[23,3,1],
@@ -241,13 +249,5 @@ var NAVTREEINDEX4 =
 "structtinyinstruments_1_1GuitarAmp_1_1Settings.html#a7cb6cc415b25e164ff2726c97aba88dc":[23,0,0,8,0,8],
 "structtinyinstruments_1_1GuitarAmp_1_1Settings.html#a879bceaf5f707f9b79fd3a2b2b70ecfc":[22,0,0,8,0,9],
 "structtinyinstruments_1_1GuitarAmp_1_1Settings.html#a879bceaf5f707f9b79fd3a2b2b70ecfc":[23,0,0,8,0,9],
-"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#a92f2b6c1eb35bf0303d12d616735a78c":[22,0,0,8,0,3],
-"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#a92f2b6c1eb35bf0303d12d616735a78c":[23,0,0,8,0,3],
-"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#a999ad9ab3703d2c59e4317dec0f50d66":[22,0,0,8,0,11],
-"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#a999ad9ab3703d2c59e4317dec0f50d66":[23,0,0,8,0,11],
-"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#aa6c734afd1f5d98d28eeaab21d8ff098":[22,0,0,8,0,12],
-"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#aa6c734afd1f5d98d28eeaab21d8ff098":[23,0,0,8,0,12],
-"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#aaa815ad2006b8555fc4ca50ef51a123a":[22,0,0,8,0,6],
-"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#aaa815ad2006b8555fc4ca50ef51a123a":[23,0,0,8,0,6],
-"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#ae4429b27ca20044870232a6f9772c32e":[22,0,0,8,0,0]
+"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#a92f2b6c1eb35bf0303d12d616735a78c":[22,0,0,8,0,3]
 };

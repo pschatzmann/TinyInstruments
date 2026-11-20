@@ -181,20 +181,22 @@ Usage</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><span class="tt">--volume V</span>  </td><td class="markdownTableBodyNone">master volume (default: 0.5)  </td></tr>
 <tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">--map-cc FROM:TO</span>  </td><td class="markdownTableBodyNone">map a received controller to another one, e.g. <span class="tt">91:7</span> (a knob which sends CC91 changes the volume) or <span class="tt">91:off</span> (ignored); repeatable. Only for the sound of the player: forwarded messages are not changed  </td></tr>
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><span class="tt">--rate N</span>  </td><td class="markdownTableBodyNone">sample rate (default: 44100)  </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><span class="tt">--buffer N</span>  </td><td class="markdownTableBodyNone">audio buffer in frames (default: 256 = 5.8 ms)  </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><span class="tt">--wav FILE</span>  </td><td class="markdownTableBodyNone">record to a wav file instead of playing on the sound card  </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><span class="tt">--seconds S</span>  </td><td class="markdownTableBodyNone">stop after S seconds  </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><span class="tt">--verbose</span>  </td><td class="markdownTableBodyNone">print the received midi messages (hex)  </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><span class="tt">--send TARGET</span>  </td><td class="markdownTableBodyNone">forward the midi messages (repeatable, see below)  </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><span class="tt">--no-audio</span>  </td><td class="markdownTableBodyNone">do not play on the desktop: only forward  </td></tr>
+<td class="markdownTableBodyNone"><span class="tt">--send TARGET</span>  </td><td class="markdownTableBodyNone">forward the midi messages (repeatable, see below)  </td></tr>
 <tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">--no-audio</span>  </td><td class="markdownTableBodyNone">do not play on the desktop: only forward  </td></tr>
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><span class="tt">--thru</span>  </td><td class="markdownTableBodyNone">forward all messages unchanged, also system exclusive, clock and active sensing (default: they are ignored), see MIDI thru  </td></tr>
 </table>
 <p>All midi controllers of the instruments work as on the microcontroller, e.g. the sustain pedal, the modulation wheel (vibrato of the wind and string instruments, tremolo depth of the electric piano, speed of the organ's rotary speaker, no effect on the piano) or CC19 to switch the amp preset (see <a class="el" href="md_docs_2instruments.html">Instruments</a> and <a class="el" href="md_docs_2guitar.html">Electric Guitar</a>).</p>

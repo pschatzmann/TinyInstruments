@@ -1,5 +1,13 @@
 var NAVTREEINDEX5 =
 {
+"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#a92f2b6c1eb35bf0303d12d616735a78c":[23,0,0,8,0,3],
+"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#a999ad9ab3703d2c59e4317dec0f50d66":[22,0,0,8,0,11],
+"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#a999ad9ab3703d2c59e4317dec0f50d66":[23,0,0,8,0,11],
+"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#aa6c734afd1f5d98d28eeaab21d8ff098":[22,0,0,8,0,12],
+"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#aa6c734afd1f5d98d28eeaab21d8ff098":[23,0,0,8,0,12],
+"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#aaa815ad2006b8555fc4ca50ef51a123a":[22,0,0,8,0,6],
+"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#aaa815ad2006b8555fc4ca50ef51a123a":[23,0,0,8,0,6],
+"structtinyinstruments_1_1GuitarAmp_1_1Settings.html#ae4429b27ca20044870232a6f9772c32e":[22,0,0,8,0,0],
 "structtinyinstruments_1_1GuitarAmp_1_1Settings.html#ae4429b27ca20044870232a6f9772c32e":[23,0,0,8,0,0],
 "structtinyinstruments_1_1Instrument.html":[22,0,0,10],
 "structtinyinstruments_1_1Instrument.html":[23,0,0,10],

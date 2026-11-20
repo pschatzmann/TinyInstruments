@@ -99,7 +99,11 @@ Keyboard instruments (piano, mallets, ...)</h1>
 <div class="fragment"><div class="line">python3 tools/sfz2header.py MyPiano.sfz --name MyPiano --budget 700000 \</div>
 <div class="line">    --rate 32000 -o src/samples/MyPiano.h</div>
 </div><!-- fragment --><p>The zone lengths go from long (bass, <span class="tt">--bass</span>) to short (treble, <span class="tt">--treble</span>) and are scaled to fit into the budget.</p>
-<p>The natural decay is measured over 2.5 s and re-applied by the player. A piano decays faster at the beginning, where the loop is, so the converter also removes the remaining level trend inside of the loop: otherwise the level would drop during each pass of the loop and jump back at its start, which sounds like a vibrato on long notes (<span class="tt">--max-flatten-db</span> limits the correction).</p>
+<p>The natural decay is measured over 2.5 s and re-applied by the player. Inside of the loop the level is made constant, otherwise the repetition of the loop turns it into a periodic modulation on long notes:</p>
+<ul>
+<li>a piano decays faster at the beginning, where the loop is: the rest of the decay inside of the loop would drop during each pass and jump back at its start, which sounds like a vibrato (<span class="tt">--max-flatten-db</span> limits the correction)</li>
+<li>the beating of the strings inside of a short loop (high notes) would become a ringing warble. The envelope of the loop (measured over at least 3 periods) is flattened, the waveform is kept; the attack before the loop keeps its natural beating. <span class="tt">--natural-loop-envelope</span> keeps the fluctuations (only <span class="tt">--mode keyboard</span> flattens the envelope: the long loops of <span class="tt">--mode sustain</span> keep the natural fluctuations of the tone)</li>
+</ul>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md97"></a>
 Drums and percussion</h1>
 <div class="fragment"><div class="line">python3 tools/sfz2header.py Drums.sfz --name MyDrums --mode natural \</div>

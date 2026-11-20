@@ -298,9 +298,12 @@ Midi</h1>
 <td class="markdownTableBodyNone">CC64 sustain pedal  </td><td class="markdownTableBodyNone">holds the notes  </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">CC120, CC121, CC123  </td><td class="markdownTableBodyNone">all sound off, reset controllers, all notes off  </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">program change  </td><td class="markdownTableBodyNone">selects the instrument of the channel from the <span class="tt">InstrumentBank</span>  </td></tr>
 </table>
+<p>Controllers which the keyboard sends for something else can be mapped, e.g. a knob which sends CC91 (<span class="tt">B6 5B 00</span>-<span class="tt">7F</span>: reverb level in General MIDI, on channel 7) to the volume of the channel:</p>
+<div class="fragment"><div class="line">synth.mapController(91, 7);                              <span class="comment">// CC91 -&gt; volume (CC7)</span></div>
+<div class="line">synth.mapController(1, SampleSynthesizer::CC_IGNORE);    <span class="comment">// ignore the modulation wheel</span></div>
+<div class="line">synth.mapController(91, 91);                             <span class="comment">// remove the mapping</span></div>
+</div><!-- fragment --><p>The mapping is applied when the messages are received (also to the controllers of the effects, e.g. CC1 of the tremolo). Define it in <span class="tt">setup()</span>. | program change | selects the instrument of the channel from the <span class="tt">InstrumentBank</span> |</p>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md66"></a>
 Program changes</h1>
 <p>An <span class="tt">InstrumentBank</span> maps program numbers (e.g. General MIDI) to instruments and effects, so that a keyboard can switch the instruments:</p>

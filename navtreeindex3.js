@@ -1,5 +1,13 @@
 var NAVTREEINDEX3 =
 {
+"classtinyinstruments_1_1SamplerVoice.html#a2bbcc4c63e060c23d4b5359eb55286e0":[23,0,0,16,13],
+"classtinyinstruments_1_1SamplerVoice.html#a3036bc07071ce284a0fa57783f772d78":[22,0,0,16,26],
+"classtinyinstruments_1_1SamplerVoice.html#a3036bc07071ce284a0fa57783f772d78":[23,0,0,16,26],
+"classtinyinstruments_1_1SamplerVoice.html#a359bd4d1105ae6885a9b9fbf4d414dc0":[22,0,0,16,6],
+"classtinyinstruments_1_1SamplerVoice.html#a359bd4d1105ae6885a9b9fbf4d414dc0":[23,0,0,16,6],
+"classtinyinstruments_1_1SamplerVoice.html#a364c3dd8bd50f5d91e876369e5df5fd0":[22,0,0,16,33],
+"classtinyinstruments_1_1SamplerVoice.html#a364c3dd8bd50f5d91e876369e5df5fd0":[23,0,0,16,33],
+"classtinyinstruments_1_1SamplerVoice.html#a365a963ee22d391137dbdb213e0be4c8":[22,0,0,16,62],
 "classtinyinstruments_1_1SamplerVoice.html#a365a963ee22d391137dbdb213e0be4c8":[23,0,0,16,62],
 "classtinyinstruments_1_1SamplerVoice.html#a36b9e8dd86a8d11b124373168f532b52":[22,0,0,16,38],
 "classtinyinstruments_1_1SamplerVoice.html#a36b9e8dd86a8d11b124373168f532b52":[23,0,0,16,38],
@@ -241,13 +249,5 @@ var NAVTREEINDEX3 =
 "classtinyinstruments_1_1TremoloEffect.html#adf0aad2745480aaad3f44412e75bd595":[23,0,0,20,0],
 "dir_45c71fbaa3ef2226f312c4a9ade0f49c.html":[24,0,1,0],
 "dir_49e56c817e5e54854c35e136979f97ca.html":[24,0,0],
-"dir_68267d1309a1af8e8297ef4c3efbcdba.html":[24,0,1],
-"files.html":[24,0],
-"functions.html":[23,3,0],
-"functions.html":[23,3,0,0],
-"functions_b.html":[23,3,0,1],
-"functions_c.html":[23,3,0,2],
-"functions_d.html":[23,3,0,3],
-"functions_e.html":[23,3,0,4],
-"functions_enum.html":[23,3,3]
+"dir_68267d1309a1af8e8297ef4c3efbcdba.html":[24,0,1]
 };

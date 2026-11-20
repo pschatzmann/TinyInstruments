@@ -121,6 +121,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad451cbe9d7e240c966e56351d07861cc" id="r_ad451cbe9d7e240c966e56351d07861cc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad451cbe9d7e240c966e56351d07861cc">noteOn</a> (uint8_t channel, uint8_t note, uint8_t velocity)</td></tr>
 <tr class="memitem:a7f78d600dd2525560c62e80a684fbc58" id="r_a7f78d600dd2525560c62e80a684fbc58"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f78d600dd2525560c62e80a684fbc58">noteOff</a> (uint8_t channel, uint8_t note, uint8_t velocity=0)</td></tr>
 <tr class="memitem:a6c38da96e3e4ab3a2fff04d01b0617d7" id="r_a6c38da96e3e4ab3a2fff04d01b0617d7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c38da96e3e4ab3a2fff04d01b0617d7">controlChange</a> (uint8_t channel, uint8_t controller, uint8_t value)</td></tr>
+<tr class="memitem:ae48b0b10c56f97c619a92e49132e5e16" id="r_ae48b0b10c56f97c619a92e49132e5e16"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae48b0b10c56f97c619a92e49132e5e16">mapController</a> (uint8_t from, uint8_t to)</td></tr>
+<tr class="memitem:a4b1a6de718e8aab6152a486415699dfa" id="r_a4b1a6de718e8aab6152a486415699dfa"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b1a6de718e8aab6152a486415699dfa">controllerMapping</a> (uint8_t from) const</td></tr>
+<tr class="memdesc:a4b1a6de718e8aab6152a486415699dfa"><td class="mdescLeft">&#160;</td><td class="mdescRight">The controller to which a received controller is mapped (CC_IGNORE: ignored).  <br /></td></tr>
 <tr class="memitem:a3ca307b523dd088ca47d4c4e01d46104" id="r_a3ca307b523dd088ca47d4c4e01d46104"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ca307b523dd088ca47d4c4e01d46104">pitchBend</a> (uint8_t channel, uint16_t value)</td></tr>
 <tr class="memdesc:a3ca307b523dd088ca47d4c4e01d46104"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pitch bend: 0..16383, center is 8192.  <br /></td></tr>
 <tr class="memitem:af0afb7c172de3a98d4b515590fbeb92d" id="r_af0afb7c172de3a98d4b515590fbeb92d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0afb7c172de3a98d4b515590fbeb92d">programChange</a> (uint8_t channel, uint8_t <a class="el" href="#a1dd76e1ac3d957ac7bbc5f6544cd0ed1">program</a>)</td></tr>
@@ -148,6 +151,11 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:abe95518f29156b76fee27620e7dda1a5" id="r_abe95518f29156b76fee27620e7dda1a5"><td class="memItemLeft" align="right" valign="top">static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe95518f29156b76fee27620e7dda1a5">voiceCount</a> ()</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-static-attribs" class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:aa199f8c15a62a99216ec68441997e69c" id="r_aa199f8c15a62a99216ec68441997e69c"><td class="memItemLeft" align="right" valign="top">static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa199f8c15a62a99216ec68441997e69c">CC_IGNORE</a> = 0xFF</td></tr>
+<tr class="memdesc:aa199f8c15a62a99216ec68441997e69c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Value for <a class="el" href="#ae48b0b10c56f97c619a92e49132e5e16">mapController()</a>: the controller is ignored.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pro-methods" class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -193,6 +201,7 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:aec33e38c993972bb6f7ae8ce59257002" id="r_aec33e38c993972bb6f7ae8ce59257002"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec33e38c993972bb6f7ae8ce59257002">note_counter</a> = 0</td></tr>
 <tr class="memitem:a3238f528f253fc2d063b0d089ee4e676" id="r_a3238f528f253fc2d063b0d089ee4e676"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3238f528f253fc2d063b0d089ee4e676">master</a> = 0.5f</td></tr>
 <tr class="memitem:a5845b7c2baac515ee8c8ba7a1a25c6b1" id="r_a5845b7c2baac515ee8c8ba7a1a25c6b1"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5845b7c2baac515ee8c8ba7a1a25c6b1">bend_range</a> = 2.0f</td></tr>
+<tr class="memitem:a2a0b9945a1c05cb783dc55262e92b141" id="r_a2a0b9945a1c05cb783dc55262e92b141"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a0b9945a1c05cb783dc55262e92b141">cc_map</a> [128]</td></tr>
 <tr class="memitem:a5ca11a572439545195de35a016981cf6" id="r_a5ca11a572439545195de35a016981cf6"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classtinyinstruments_1_1InstrumentBank.html">InstrumentBank</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ca11a572439545195de35a016981cf6">p_bank</a> = nullptr</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pro-static-attribs" class="groupheader"><a id="pro-static-attribs" name="pro-static-attribs"></a>
@@ -201,10 +210,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Polyphonic, multi timbral sample player which is controlled with midi events. The midi methods (<a class="el" href="#ad451cbe9d7e240c966e56351d07861cc">noteOn()</a> etc) only queue the events, so they can be called from a different task than <a class="el" href="#a6a3c9e538109b8630b20f89ae84234bb" title="Renders interleaved 16 bit stereo frames.">render()</a>. The events are applied at the start of the next <a class="el" href="#a6a3c9e538109b8630b20f89ae84234bb" title="Renders interleaved 16 bit stereo frames.">render()</a> call. </p>
-<p>Supported: note on/off, modulation wheel (CC1: vibrato), breath controller (CC2), volume (CC7), expression (CC11), sustain pedal (CC64), all sound off (CC120), reset all controllers (CC121), all notes off (CC123) and pitch bend (+/- 2 semitones by default).</p>
+<p>Supported: note on/off, modulation wheel (CC1: vibrato), breath controller (CC2), volume (CC7), expression (CC11), sustain pedal (CC64), all sound off (CC120), reset all controllers (CC121), all notes off (CC123) and pitch bend (+/- 2 semitones by default). Received controllers can be mapped to other ones with <a class="el" href="#ae48b0b10c56f97c619a92e49132e5e16">mapController()</a>, e.g. a knob which sends CC91 to the volume.</p>
 <p>Polyphony: max maxNotes (default TI_MAX_VOICES = 10) notes sound at the same time, and max <a class="el" href="structtinyinstruments_1_1Instrument.html#afd28a7f6af3390b6ef46424f787a516e" title="max number of notes of this instrument which sound at the same time">Instrument::maxNotes</a> per channel. If another note is played, the quietest released note (or the oldest note) is faded out within a few milliseconds using one of the additional TI_FADE_VOICES voices. If you combine several instruments (e.g. piano and drums), increase TI_MAX_VOICES. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00035">35</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00036">36</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a1bc03d7df6204557b204e16c00c48bf6" name="a1bc03d7df6204557b204e16c00c48bf6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1bc03d7df6204557b204e16c00c48bf6">&#9670;&#160;</a></span>SampleSynthesizer()</h2>
@@ -229,7 +238,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00037">37</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00038">38</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -259,7 +268,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Number of sounding notes (without the notes which are fading out). </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00166">166</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00188">188</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -288,7 +297,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Number of sounding notes of a channel (without fading notes). </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00636">636</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00659">659</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -317,7 +326,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Number of sounding voices (including the notes which are fading out). </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00174">174</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00196">196</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -346,7 +355,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Stops all notes on all channels (with release). </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00124">124</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00145">145</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -378,7 +387,7 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Provides a voice for a new note: if the max number of notes of the instrument or of the synthesizer is reached, the quietest released note (or the oldest note) is faded out. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00671">671</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00694">694</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -410,7 +419,7 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Starts the processing with the output sample rate and the max number of notes which can sound at the same time (&lt;= TI_MAX_VOICES) </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00058">58</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00062">62</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -437,7 +446,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00623">623</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00646">646</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -473,7 +482,36 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00102">102</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00106">106</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+
+</div>
+</div>
+<a id="a4b1a6de718e8aab6152a486415699dfa" name="a4b1a6de718e8aab6152a486415699dfa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b1a6de718e8aab6152a486415699dfa">&#9670;&#160;</a></span>controllerMapping()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t tinyinstruments::SampleSynthesizer::controllerMapping </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>from</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The controller to which a received controller is mapped (CC_IGNORE: ignored). </p>
+
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00125">125</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -509,7 +547,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00542">542</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00565">565</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -540,7 +578,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00506">506</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00529">529</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -576,7 +614,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00328">328</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00351">351</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -607,7 +645,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00614">614</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00637">637</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -639,7 +677,39 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Selects the instrument and effect of the channel: sounding notes continue with their samples, new notes use the new instrument </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00224">224</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00247">247</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+
+</div>
+</div>
+<a id="ae48b0b10c56f97c619a92e49132e5e16" name="ae48b0b10c56f97c619a92e49132e5e16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae48b0b10c56f97c619a92e49132e5e16">&#9670;&#160;</a></span>mapController()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tinyinstruments::SampleSynthesizer::mapController </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>from</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>to</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Maps a received midi controller to another one, e.g. mapController(91, 7): a knob which sends CC91 (reverb level in General MIDI) changes the volume of the channel (CC7). CC_IGNORE ignores the controller, mapController(n, n) removes the mapping. Define the mappings in setup(): they are applied when the messages are received. </p>
+
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00120">120</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -668,7 +738,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Max number of notes which can sound at the same time. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00182">182</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00204">204</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -704,7 +774,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00098">98</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00102">102</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -740,7 +810,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00093">93</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00097">97</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -773,7 +843,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Pitch bend: 0..16383, center is 8192. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00107">107</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00128">128</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -816,7 +886,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Monophonic: fades out the sounding note and starts the new one. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00347">347</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00370">370</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -843,7 +913,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00252">252</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00275">275</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -872,7 +942,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Current program of the channel (-1 = not selected by a program change). </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00121">121</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00142">142</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -904,7 +974,7 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Program change: selects the instrument (and effect) of the channel from the <a class="el" href="classtinyinstruments_1_1InstrumentBank.html" title="Maps midi program numbers (0..127, e.g. General MIDI) to instruments and optional channel effects....">InstrumentBank</a>. Unknown programs are ignored. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00113">113</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00134">134</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -950,7 +1020,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00246">246</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00269">269</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -981,7 +1051,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00531">531</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00554">554</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1012,7 +1082,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00362">362</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00385">385</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1045,7 +1115,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Renders interleaved 16 bit stereo frames. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00131">131</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00153">153</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1081,7 +1151,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00277">277</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00300">300</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1119,7 +1189,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Renders (overwrites) float output in the range -1..1 (not limited). </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00151">151</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00173">173</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1146,7 +1216,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00689">689</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00712">712</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1173,7 +1243,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00068">68</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00072">72</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1205,7 +1275,7 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Assigns an effect (e.g. <a class="el" href="classtinyinstruments_1_1GuitarAmp.html" title="Amplifier for the direct (DI) signal of an electric guitar or bass: drive with oversampled,...">GuitarAmp</a>) to a midi channel (0..15) or all channels (-1); nullptr removes it. Channels which share the same effect object are processed together. Call it before the audio processing starts or from the audio task. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00050">50</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00054">54</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1238,7 +1308,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Defines the instrument for a midi channel (0..15) or all channels (-1). </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00040">40</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00044">44</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1267,7 +1337,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Defines the instruments which are selected with program changes. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00118">118</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00139">139</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1296,7 +1366,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Pitch bend range in semitones (default 2). </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00075">75</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00079">79</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1325,7 +1395,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Fade out time in seconds for stolen notes (default 5 ms). </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00189">189</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00211">211</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1356,7 +1426,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00601">601</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00624">624</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1388,7 +1458,7 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Transposition of a midi channel (0..15) or of all channels (-1) in semitones, e.g. -24: the notes of the channel are played two octaves lower. Notes which are already sounding keep their pitch (and are released correctly). </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00081">81</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00085">85</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1417,7 +1487,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Master gain (default 0.5). </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00071">71</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00075">75</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1449,7 +1519,7 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Note which sounds for a received key: with the transposition of the channel and of the instrument </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00501">501</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00524">524</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1492,7 +1562,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Starts a voice; legato: without attack (from the loop start) with a fade in. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00375">375</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00398">398</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1530,7 +1600,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Starts a note of a tonewheel organ. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00461">461</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00484">484</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1559,7 +1629,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Fades out the quietest released note (or the oldest note); ch &lt; 0: any channel. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00644">644</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00667">667</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1587,7 +1657,7 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Soft limiter for values scaled to 16 bit: linear up to 90% of the full scale, then smooth saturation </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00317">317</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00340">340</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1616,7 +1686,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Transposition of a midi channel in semitones. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00089">89</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00093">93</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1643,7 +1713,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00627">627</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00650">650</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1672,7 +1742,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Provides access to the voices (e.g. for tests): 0 .. <a class="el" href="#abe95518f29156b76fee27620e7dda1a5">voiceCount()</a>-1. </p>
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00185">185</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00207">207</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1699,7 +1769,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00186">186</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00208">208</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1726,7 +1796,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00072">72</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00076">76</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1751,7 +1821,57 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00219">219</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00241">241</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+
+</div>
+</div>
+<a id="aa199f8c15a62a99216ec68441997e69c" name="aa199f8c15a62a99216ec68441997e69c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa199f8c15a62a99216ec68441997e69c">&#9670;&#160;</a></span>CC_IGNORE</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t tinyinstruments::SampleSynthesizer::CC_IGNORE = 0xFF</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Value for <a class="el" href="#ae48b0b10c56f97c619a92e49132e5e16">mapController()</a>: the controller is ignored. </p>
+
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00113">113</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+
+</div>
+</div>
+<a id="a2a0b9945a1c05cb783dc55262e92b141" name="a2a0b9945a1c05cb783dc55262e92b141"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a0b9945a1c05cb783dc55262e92b141">&#9670;&#160;</a></span>cc_map</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t tinyinstruments::SampleSynthesizer::cc_map[128]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00242">242</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1775,7 +1895,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00212">212</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00234">234</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1799,7 +1919,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00218">218</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00240">240</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1823,7 +1943,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00215">215</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00237">237</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1847,7 +1967,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00217">217</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00239">239</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1871,7 +1991,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00220">220</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00243">243</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1895,7 +2015,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00213">213</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00235">235</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1919,7 +2039,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00214">214</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00236">236</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1943,7 +2063,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00216">216</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00238">238</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1967,7 +2087,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00210">210</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00232">232</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
@@ -1991,7 +2111,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00211">211</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SampleSynthesizer_8h_source.html#l00233">233</a> of file <a class="el" href="SampleSynthesizer_8h_source.html">SampleSynthesizer.h</a>.</p>
 
 </div>
 </div>
